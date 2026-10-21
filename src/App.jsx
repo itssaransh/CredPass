@@ -119,6 +119,7 @@ export default function App() {
   const [depositAmount, setDepositAmount] = useState('');
   const [depositBusy, setDepositBusy] = useState(false);
   const [toastTimer, setToastTimer] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { account, error: walletError, connectWallet, disconnectWallet, switchToLocalNetwork, shortenedAddress, hasMetaMask, isLocalNetwork } = useWallet();
 
@@ -358,6 +359,17 @@ export default function App() {
             <a href="#features" className="text-[var(--color-muted-strong)] hover:text-[var(--color-primary)] transition-colors">Features</a>
             <a href="#how-it-works" className="text-[var(--color-muted-strong)] hover:text-[var(--color-primary)] transition-colors">How It Works</a>
           </div>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-md bg-[var(--color-surface-card-dark)] border border-[var(--color-hairline-dark)] hover:bg-[var(--color-surface-elevated-dark)] transition-colors"
+            aria-label="Open menu"
+          >
+            <svg className="w-5 h-5 text-[var(--color-body-dark)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
           <div className="flex items-center gap-3 ml-4">
             {account ? (
               <>
@@ -394,6 +406,45 @@ export default function App() {
           </div>
         </div>
       </nav>
+
+      {/* Mobile menu panel */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 bg-[var(--color-canvas-dark)]/95 backdrop-blur-sm">
+          <div className="absolute top-0 right-0 p-4">
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2 rounded-md text-[var(--color-muted-strong)] hover:text-[var(--color-primary)] transition-colors"
+              aria-label="Close menu"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+          <div className="container pt-20 pb-10">
+            <nav className="space-y-6">
+              <a href="#features" className="block px-6 py-3 text-[var(--color-body-dark)] rounded-xl hover:bg-[var(--color-surface-elevated-dark)] hover:text-[var(--color-primary)] transition-colors">Features</a>
+              <a href="#how-it-works" className="block px-6 py-3 text-[var(--color-body-dark)] rounded-xl hover:bg-[var(--color-surface-elevated-dark)] hover:text-[var(--color-primary)] transition-colors">How It Works</a>
+              {account && (
+                <button onClick={switchToLocalNetwork} className="w-full text-left px-6 py-3 text-sm text-[var(--color-body-dark)] rounded-xl bg-[var(--color-surface-card-dark)] border border-[var(--color-hairline-dark)] hover:bg-[var(--color-surface-elevated-dark)] transition-colors">
+                  Switch to Hardhat Network
+                </button>
+              )}
+              {account && (
+                <button onClick={disconnectWallet} className="w-full text-left px-6 py-3 text-sm text-[var(--color-trading-down)] rounded-xl bg-[var(--color-surface-card-dark)] border border-[var(--color-hairline-dark)] hover:bg-[var(--color-trading-down)]/10 transition-colors">
+                  Disconnect Wallet
+                </button>
+              )}
+              {!account && (
+                <button onClick={connectWallet} disabled={!hasMetaMask} className="w-full text-left px-6 py-3 text-sm font-bold text-[var(--color-ink)] rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-active)] disabled:opacity-40 transition-colors">
+                  {hasMetaMask ? 'Connect Wallet' : 'No Wallet'}
+                </button>
+              )}
+            </nav>
+          </div>
+        </div>
+      )}
 
       <div className="pt-16 pb-8">
         {faucetState.status !== 'idle' && faucetState.message && (
