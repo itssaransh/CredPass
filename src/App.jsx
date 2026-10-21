@@ -392,6 +392,7 @@ export default function App() {
 
         {/* Hero */}
         <section id="features" className="relative overflow-hidden pt-6">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[var(--color-primary)]/10 rounded-full blur-[100px] pointer-events-none"></div>
           <div className="container">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-semibold mb-6 animate-fade-in">
               <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-bounce"></span>
@@ -633,7 +634,13 @@ export default function App() {
         <h2 className="text-xl font-bold text-white mb-6">Pool &amp; Loan State (On-Chain)</h2>
         <div className="grid sm:grid-cols-3 gap-5 mb-8">
           <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
-            <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Pool Liquidity</div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)]">Pool Liquidity</div>
+              <span className="flex items-center gap-1.5">
+                <span className="status-dot w-1.5 h-1.5 rounded-full bg-[var(--color-trading-up)]"></span>
+                <span className="text-[10px] font-bold text-[var(--color-trading-up)] uppercase">Live</span>
+              </span>
+            </div>
             <div className="text-2xl font-mono font-bold text-white">{poolLiquidity} ETH</div>
           </div>
           <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
@@ -742,15 +749,15 @@ export default function App() {
         {contractError && <p className="mt-4 text-sm text-[var(--color-trading-down)]">{contractError}</p>}
       </section>
 
-      {/* Transaction State */}
+      {/* Transaction State (floating toast) */}
       {txState.status !== 'idle' && (
-        <section className="container px-0 pt-4">
-          <div className={`rounded-2xl p-6 border ${
+        <section className="fixed top-20 right-6 z-50 w-full max-w-sm pointer-events-none">
+          <div className={`pointer-events-auto rounded-2xl p-6 border ${
             txState.status === 'confirmed'
-              ? 'bg-[var(--color-trading-up)]/10 border-[var(--color-trading-up)]'
+              ? 'bg-[var(--color-trading-up)]/10 border-[var(--color-trading-up)] shadow-[0_10px_40px_-10px_rgba(14,203,129,0.3)]'
               : txState.status === 'failed'
-                ? 'bg-[var(--color-trading-down)]/10 border-[var(--color-trading-down)]'
-                : 'bg-[var(--color-surface-card-dark)] border-[var(--color-hairline-dark)]'
+                ? 'bg-[var(--color-trading-down)]/10 border-[var(--color-trading-down)] shadow-[0_10px_40px_-10px_rgba(246,70,93,0.3)]'
+                : 'bg-[var(--color-surface-card-dark)] border-[var(--color-hairline-dark)] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)]'
           } toast-enter`}>
             <div className="flex items-center gap-3">
               {txState.status === 'confirmed' && <CheckIcon className="w-4 h-4 text-[var(--color-trading-up)]" />}
