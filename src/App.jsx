@@ -346,7 +346,16 @@ export default function App() {
             {account ? (
               <>
                 <span className="text-xs font-medium text-[var(--color-body-dark)] bg-[var(--color-surface-card-dark)] px-3 py-1.5 rounded-full border border-[var(--color-hairline-dark)]">{shortenedAddress}</span>
-                <span className="text-xs text-[var(--color-muted-strong)]">{isLocalNetwork ? 'Local' : 'Wrong Network'}</span>
+                <span className="text-xs text-[var(--color-muted-strong)] flex items-center gap-1.5">
+                  {isLocalNetwork ? (
+                    <>
+                      <span className="status-dot w-1.5 h-1.5 rounded-full bg-[var(--color-trading-up)]"></span>
+                      Local
+                    </>
+                  ) : (
+                    'Wrong Network'
+                  )}
+                </span>
                 {account && isLocalNetwork && (
                   <button
                     onClick={handleFaucet}
@@ -423,6 +432,36 @@ export default function App() {
             {backendError && (
               <p className="mt-4 text-sm text-[var(--color-trading-down)] animate-fade-in">{backendError}</p>
             )}
+
+            {/* Features */}
+            <section className="mt-16 px-6 pt-12 pb-16 border-t border-[var(--color-hairline-dark)]">
+              <div className="max-w-5xl mx-auto">
+                <div className="grid md:grid-cols-3 gap-6">
+                  <div className="card-lift stagger-1 bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)] animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
+                    <ShieldIcon className="w-10 h-10 text-[var(--color-primary)] mb-4" />
+                    <h3 className="text-lg font-bold text-white mb-3">Privacy-First</h3>
+                    <p className="text-sm text-[var(--color-muted-strong)] leading-relaxed">
+                      EIP-712 signed credentials prove your tier without exposing raw financial data. Selective disclosure — share your status, not your history.
+                    </p>
+                  </div>
+                  <div className="card-lift stagger-2 bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)] animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
+                    <TrendingUpIcon className="w-10 h-10 text-[var(--color-primary)] mb-4" />
+                    <h3 className="text-lg font-bold text-white mb-3">Undercollateralized</h3>
+                    <p className="text-sm text-[var(--color-muted-strong)] leading-relaxed">
+                      Smart contracts verify your credential and instantly unlock undercollateralized loan terms — no 150% lock-up required.
+                    </p>
+                  </div>
+                  <div className="card-lift stagger-3 bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)] animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
+                    <WalletIcon className="w-10 h-10 text-[var(--color-primary)] mb-4" />
+                    <h3 className="text-lg font-bold text-white mb-3">Wallet-Linked</h3>
+                    <p className="text-sm text-[var(--color-muted-strong)] leading-relaxed">
+                      Your credit reputation travels with your MetaMask wallet. Portable, verifiable, yours.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             {credential && (
               <div className="mt-12 max-w-2xl mx-auto animate-fade-in animate-slide-up" style={{ animationDelay: '400ms' }}>
                 <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)] text-left">
@@ -542,15 +581,15 @@ export default function App() {
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-white mb-6">Pool &amp; Loan State (On-Chain)</h2>
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-7 border border-[var(--color-hairline-dark)]">
+            <div className="card-lift stagger-1 bg-[var(--color-surface-card-dark)] rounded-2xl p-7 border border-[var(--color-hairline-dark)] animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
               <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-3">Pool Liquidity</div>
               <div className="text-3xl font-mono font-bold text-white">{poolLiquidity} ETH</div>
             </div>
-            <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-7 border border-[var(--color-hairline-dark)]">
+            <div className="card-lift stagger-2 bg-[var(--color-surface-card-dark)] rounded-2xl p-7 border border-[var(--color-hairline-dark)] animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
               <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-3">Your Accrued Yield</div>
               <div className="text-3xl font-mono font-bold text-[var(--color-primary)]">{earnedYield !== null ? earnedYield + ' ETH' : '—'}</div>
             </div>
-            <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-7 border border-[var(--color-hairline-dark)]">
+            <div className="card-lift stagger-3 bg-[var(--color-surface-card-dark)] rounded-2xl p-7 border border-[var(--color-hairline-dark)] animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
               <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-3">Total Deposited</div>
               <div className="text-3xl font-mono font-bold text-white">{loanState?.principal ? loanState.principal : '0'} ETH</div>
             </div>
@@ -609,7 +648,7 @@ export default function App() {
                   Deposit into Pool
                 </h4>
                 <p className="text-xs text-[var(--color-muted-strong)] mb-6">Deposit ETH into the lending pool — you accrue a proportional share of repayment interest.</p>
-                <div className="flex gap-3">
+                <div className="input-focus flex gap-3">
                   <input
                     type="text"
                     inputMode="decimal"

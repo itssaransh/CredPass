@@ -97,6 +97,62 @@ body {
   transform: scale(0.97);
 }
 
-/* Toast notification */
-.toast-enter { animation: slideIn 0.3s ease-out forwards; }
+/* Card hover lift */
+.card-lift {
+  transition: all 0.2s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-primary) !important;
+}
+
+/* Input focus ring */
+.input-focus:focus-within {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+/* Loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Success flash */
+@keyframes flash-success {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.flash-success {
+  animation: flash-success 1.5s ease-in-out;
+}
+
+/* Staggered entrance for feature cards */
+.stagger-1 { animation-delay: 100ms; }
+.stagger-2 { animation-delay: 200ms; }
+.stagger-3 { animation-delay: 300ms; }
+
+/* Pulse dot for live status */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.status-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* Section entrance */
+.section-enter {
+  animation: fadeIn 0.6s ease-out both;
+}
+
+/* Number counter */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Toast exit */
 .toast-exit { animation: slideIn 0.3s ease-in reverse forwards; }
