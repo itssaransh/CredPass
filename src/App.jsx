@@ -118,6 +118,7 @@ export default function App() {
   const [claimBusy, setClaimBusy] = useState(false);
   const [depositAmount, setDepositAmount] = useState('');
   const [depositBusy, setDepositBusy] = useState(false);
+  const [toastTimer, setToastTimer] = useState(null);
 
   const { account, error: walletError, connectWallet, disconnectWallet, switchToLocalNetwork, shortenedAddress, hasMetaMask, isLocalNetwork } = useWallet();
 
@@ -179,6 +180,21 @@ export default function App() {
     })();
     return () => { cancelled = true; };
   }, [credential, getContract]);
+
+  // Auto-dismiss successful toasts after 5 seconds
+  useEffect(() => {
+    if (txState.status === 'confirmed' && toastTimer === null) {
+      const timer = setTimeout(() => {
+        setTxState({ status: 'idle', hash: null, message: null });
+        setToastTimer(null);
+      }, 5000);
+      setToastTimer(timer);
+    }
+    if (txState.status === 'idle' && toastTimer) {
+      clearTimeout(toastTimer);
+      setToastTimer(null);
+    }
+  }, [txState.status, toastTimer]);
 
   const handleLaunch = async () => {
     setLoading(true); setCredential(null); setBackendError(null);
@@ -491,22 +507,22 @@ export default function App() {
           <section className="mt-16 px-0 pt-12 border-t border-[var(--color-hairline-dark)]">
             <div className="container">
               <div className="grid sm:grid-cols-3 gap-5">
-                <div className="card-lift stagger-1 card animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
-                  <ShieldIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" />
+                <div className="card-lift stagger-1 card animate-fade-in animate-slide-up group" style={{ animationDelay: '100ms' }}>
+                  <ShieldIcon className="w-5 h-5 text-[var(--color-primary)] mb-3 group-hover:text-[var(--color-primary-active)] transition-colors" />
                   <h3 className="text-sm font-bold text-white mb-2">Privacy-First</h3>
                   <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
                     EIP-712 signed credentials prove your tier without exposing raw financial data.
                   </p>
                 </div>
-                <div className="card-lift stagger-2 card animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
-                  <TrendingUpIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" />
+                <div className="card-lift stagger-2 card animate-fade-in animate-slide-up group" style={{ animationDelay: '200ms' }}>
+                  <TrendingUpIcon className="w-5 h-5 text-[var(--color-primary)] mb-3 group-hover:text-[var(--color-primary-active)] transition-colors" />
                   <h3 className="text-sm font-bold text-white mb-2">Undercollateralized</h3>
                   <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
                     Smart contracts verify your credential and unlock undercollateralized loan terms.
                   </p>
                 </div>
-                <div className="card-lift stagger-3 card animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
-                  <WalletIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" />
+                <div className="card-lift stagger-3 card animate-fade-in animate-slide-up group" style={{ animationDelay: '300ms' }}>
+                  <WalletIcon className="w-5 h-5 text-[var(--color-primary)] mb-3 group-hover:text-[var(--color-primary-active)] transition-colors" />
                   <h3 className="text-sm font-bold text-white mb-2">Wallet-Linked</h3>
                   <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
                     Your credit reputation travels with your MetaMask wallet. Portable and verifiable.
