@@ -34,30 +34,25 @@ export default function CredentialFlow() {
 
   return (
     <div className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-[var(--color-surface-elevated-dark)]/30 rounded-3xl blur-3xl pointer-events-none"></div>
-      <ol className="relative space-y-8">
+      <div className="absolute inset-0 bg-[var(--color-surface-elevated-dark)]/20 rounded-3xl blur-[80px] pointer-events-none"></div>
+      <div className="relative z-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {steps.map((step, i) => (
-          <div key={i} className="flex gap-5 items-start">
-            <div className="relative z-10 flex-shrink-0">
-              <div className="w-10 h-10 rounded-full bg-[var(--color-primary)] text-[var(--color-ink)] flex items-center justify-center font-bold text-sm shadow-lg shadow-primary/20 animate-fade-in" style={{ animationDelay: `${i * 100}ms` }}>
-                {step.num}
+          <div
+            key={i}
+            className={`card-lift card animate-fade-in animate-slide-up`}
+            style={{ animationDelay: `${i * 80}ms` }}
+          >
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center">
+                {step.icon}
               </div>
+              <span className="text-[10px] font-bold text-[var(--color-primary)] tracking-tighter uppercase">{step.num}</span>
             </div>
-            {i < steps.length - 1 && (
-              <div className="relative z-0 flex-shrink-0 w-px h-8 mx-4.5 mt-4">
-                <div className="absolute left-1/2 top-0 -translate-x-1/2 w-1 h-full bg-[var(--color-hairline-dark)]"></div>
-              </div>
-            )}
-            <div className="flex-1 animate-fade-in" style={{ animationDelay: `${i * 100}ms` }}>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="w-5 h-5 text-[var(--color-muted-strong)]">{step.icon}</span>
-                <h4 className="text-sm font-bold text-white">{step.title}</h4>
-              </div>
-              <p className="text-xs text-[var(--color-muted-strong)] leading-relaxed">{step.desc}</p>
-            </div>
+            <h4 className="text-sm font-bold text-white mb-2">{step.title}</h4>
+            <p className="text-[11px] text-[var(--color-muted-strong)] leading-relaxed">{step.desc}</p>
           </div>
         ))}
-      </ol>
+      </div>
     </div>
   );
 }
