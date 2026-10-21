@@ -331,12 +331,12 @@ export default function App() {
   const busy = txState.status === 'pending' || txState.status === 'submitting';
 
   return (
-    <main className="min-h-screen bg-[var(--color-canvas-dark)] text-[var(--color-body-dark)] selection:bg-[var(--color-primary)] selection:text-[var(--color-ink)]">
-      <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--color-hairline-dark)] bg-[var(--color-canvas-dark)]/95 backdrop-blur-md">
-        <div className="flex items-center justify-between px-6 h-full max-w-7xl mx-auto">
+    <main className="min-h-screen bg-[var(--color-canvas-dark)] text-[var(--color-body-dark)] selection:bg-[var(--color-primary)] selection:text-[var(--color-ink)] overflow-x-hidden">
+      <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--color-hairline-dark)] bg-[var(--color-canvas-dark)]/90 backdrop-blur-md">
+        <div className="container flex items-center justify-between h-full">
           <div className="flex items-center gap-2">
-            <ShieldIcon className="w-7 h-7 fill-[var(--color-primary)]" />
-            <span className="text-xl font-bold text-[var(--color-primary)] tracking-tight">CredPass</span>
+            <ShieldIcon className="w-6 h-6 fill-[var(--color-primary)]" />
+            <span className="text-lg font-bold text-[var(--color-primary)] tracking-tight">CredPass</span>
           </div>
           <div className="flex items-center gap-6 text-sm font-medium hidden md:flex">
             <a href="#features" className="text-[var(--color-muted-strong)] hover:text-[var(--color-primary)] transition-colors">Features</a>
@@ -345,7 +345,7 @@ export default function App() {
           <div className="flex items-center gap-3 ml-4">
             {account ? (
               <>
-                <span className="text-xs font-medium text-[var(--color-body-dark)] bg-[var(--color-surface-card-dark)] px-3 py-1.5 rounded-full border border-[var(--color-hairline-dark)]">{shortenedAddress}</span>
+                <span className="text-xs font-medium text-[var(--color-body-dark)] bg-[var(--color-surface-card-dark)] px-2.5 py-1 rounded-full border border-[var(--color-hairline-dark)]">{shortenedAddress}</span>
                 <span className="text-xs text-[var(--color-muted-strong)] flex items-center gap-1.5">
                   {isLocalNetwork ? (
                     <>
@@ -360,7 +360,7 @@ export default function App() {
                   <button
                     onClick={handleFaucet}
                     disabled={faucetState.status === 'pending' || faucetState.status === 'done'}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[var(--color-surface-card-dark)] text-[var(--color-body-dark)] border border-[var(--color-hairline-dark)] hover:bg-[var(--color-surface-elevated-dark)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--color-surface-card-dark)] text-[var(--color-body-dark)] border border-[var(--color-hairline-dark)] hover:bg-[var(--color-surface-elevated-dark)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {faucetState.status === 'pending' ? 'Dripping...' : faucetState.status === 'done' ? 'Faucet Sent' : 'Get test ETH'}
                   </button>
@@ -368,20 +368,20 @@ export default function App() {
                 <button onClick={disconnectWallet} className="text-xs font-medium text-[var(--color-muted-strong)] hover:text-[var(--color-primary)] transition-colors">Disconnect</button>
               </>
             ) : (
-              <button onClick={connectWallet} disabled={!hasMetaMask} className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[var(--color-surface-card-dark)] text-[var(--color-body-dark)] border border-[var(--color-hairline-dark)] hover:bg-[var(--color-surface-elevated-dark)] transition-colors disabled:opacity-40">
+              <button onClick={connectWallet} disabled={!hasMetaMask} className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--color-surface-card-dark)] text-[var(--color-body-dark)] border border-[var(--color-hairline-dark)] hover:bg-[var(--color-surface-elevated-dark)] transition-colors disabled:opacity-40">
                 {hasMetaMask ? 'Connect Wallet' : 'No Wallet'}
               </button>
             )}
             {!account && (
-              <a href="#features" className="px-4 py-2 rounded-md bg-[var(--color-primary)] text-[var(--color-ink)] font-semibold text-sm hover:bg-[var(--color-primary-active)] transition-colors btn-press">Get Started</a>
+              <a href="#features" className="btn-primary text-xs px-4 py-2">Get Started</a>
             )}
           </div>
         </div>
       </nav>
 
-      <div className="pt-16 pb-8 px-6">
+      <div className="pt-16 pb-8">
         {faucetState.status !== 'idle' && faucetState.message && (
-          <div className={`max-w-3xl mx-auto px-4 py-3 rounded-xl border text-xs font-medium ${
+          <div className={`container px-0 py-3 rounded-xl border text-xs font-medium ${
             faucetState.status === 'failed'
               ? 'bg-[var(--color-trading-down)]/10 border-[var(--color-trading-down)] text-[var(--color-trading-down)]'
               : 'bg-[var(--color-trading-up)]/10 border-[var(--color-trading-up)] text-[var(--color-trading-up)]'
@@ -390,311 +390,362 @@ export default function App() {
           </div>
         )}
 
-        <section id="features" className="relative px-6 text-center">
-          <div className="max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-semibold mb-8 animate-fade-in">
+        {/* Hero */}
+        <section id="features" className="relative overflow-hidden pt-6">
+          <div className="container">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-semibold mb-6 animate-fade-in">
               <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-bounce"></span>
               Privacy-First Credit Passport
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6 animate-fade-in" style={{ animationDelay: '100ms' }}>
-              Prove Credit. <span className="text-[var(--color-primary)]">Keep Control.</span>
-            </h1>
-            <p className="text-lg text-[var(--color-muted-strong)] max-w-2xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: '200ms' }}>
-              CredPass is a privacy-first, wallet-linked credit passport powered by EIP-712 signed credentials.
-              Prove your credit tier without exposing raw financial data on-chain.
-            </p>
-            <div className="flex flex-col md:flex-row justify-center gap-4 mb-12 animate-fade-in" style={{ animationDelay: '300ms' }}>
-              <button onClick={handleLaunch} disabled={loading || !account} className="px-10 py-4 rounded-xl bg-[var(--color-primary)] text-[var(--color-ink)] font-bold text-lg hover:bg-[var(--color-primary-active)] transition-all disabled:opacity-50 disabled:cursor-not-allowed btn-press">
-                {loading ? 'Signing...' : 'Get Credit Credential'}
-              </button>
-              {!account && (
-                <a href="#how-it-works" className="px-10 py-4 rounded-xl bg-[var(--color-surface-card-dark)] text-[var(--color-body-dark)] font-bold text-lg border border-[var(--color-hairline-dark)] hover:bg-[var(--color-surface-elevated-dark)] transition-all btn-press">
-                  Explore Features
-                </a>
-              )}
-            </div>
-            {!account && (
-              <p className="text-sm text-[var(--color-muted-strong)] animate-fade-in" style={{ animationDelay: '400ms' }}>
-                Connect your MetaMask wallet to issue a credential.
-              </p>
-            )}
-            {walletError && (
-              <p className="mt-4 text-sm text-[var(--color-trading-down)] animate-fade-in">{walletError}</p>
-            )}
-            {!isLocalNetwork && account && (
-              <div className="mt-8 animate-fade-in">
-                <p className="text-sm text-[var(--color-trading-down)] mb-3">Connect to local Hardhat network (0x7a69) to interact with the contract.</p>
-                <button onClick={switchToLocalNetwork} className="px-5 py-2 rounded-full bg-[var(--color-surface-elevated-dark)] text-[var(--color-body-dark)] border border-[var(--color-hairline-dark)] hover:bg-[var(--color-surface-card-dark)] text-sm font-semibold transition-colors">
-                  Switch to Hardhat Network
-                </button>
-              </div>
-            )}
-            {backendError && (
-              <p className="mt-4 text-sm text-[var(--color-trading-down)] animate-fade-in">{backendError}</p>
-            )}
-
-            {/* Features */}
-            <section className="mt-16 px-6 pt-12 pb-16 border-t border-[var(--color-hairline-dark)]">
-              <div className="max-w-5xl mx-auto">
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div className="card-lift stagger-1 bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)] animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
-                    <ShieldIcon className="w-10 h-10 text-[var(--color-primary)] mb-4" />
-                    <h3 className="text-lg font-bold text-white mb-3">Privacy-First</h3>
-                    <p className="text-sm text-[var(--color-muted-strong)] leading-relaxed">
-                      EIP-712 signed credentials prove your tier without exposing raw financial data. Selective disclosure — share your status, not your history.
-                    </p>
-                  </div>
-                  <div className="card-lift stagger-2 bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)] animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
-                    <TrendingUpIcon className="w-10 h-10 text-[var(--color-primary)] mb-4" />
-                    <h3 className="text-lg font-bold text-white mb-3">Undercollateralized</h3>
-                    <p className="text-sm text-[var(--color-muted-strong)] leading-relaxed">
-                      Smart contracts verify your credential and instantly unlock undercollateralized loan terms — no 150% lock-up required.
-                    </p>
-                  </div>
-                  <div className="card-lift stagger-3 bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)] animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
-                    <WalletIcon className="w-10 h-10 text-[var(--color-primary)] mb-4" />
-                    <h3 className="text-lg font-bold text-white mb-3">Wallet-Linked</h3>
-                    <p className="text-sm text-[var(--color-muted-strong)] leading-relaxed">
-                      Your credit reputation travels with your MetaMask wallet. Portable, verifiable, yours.
-                    </p>
-                  </div>
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div className="text-center md:text-left space-y-5 animate-fade-in" style={{ animationDelay: '100ms' }}>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
+                  Prove Credit. <span className="text-[var(--color-primary)]">Keep Control.</span>
+                </h1>
+                <p className="text-lg text-[var(--color-muted-strong)] max-w-lg md:max-w-none mx-auto md:mx-0 leading-relaxed">
+                  CredPass is a privacy-first, wallet-linked credit passport powered by EIP-712 signed credentials.
+                  Prove your credit tier without exposing raw financial data on-chain.
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center sm:justify-start gap-3 animate-fade-in" style={{ animationDelay: '200ms' }}>
+                  <button onClick={handleLaunch} disabled={loading || !account} className="btn-primary text-base">
+                    {loading ? 'Signing...' : 'Get Credit Credential'}
+                  </button>
+                  {!account && (
+                    <a href="#how-it-works" className="btn-secondary text-base">
+                      Explore Features
+                    </a>
+                  )}
                 </div>
-              </div>
-            </section>
-
-            {credential && (
-              <div className="mt-12 max-w-2xl mx-auto animate-fade-in animate-slide-up" style={{ animationDelay: '400ms' }}>
-                <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)] text-left">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)] text-[var(--color-ink)] flex items-center justify-center font-bold text-xl">
-                        {credential.credential?.tier}
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-white">Credit Credential Issued</h3>
-                        <p className="text-xs text-[var(--color-muted-strong)]">EIP-712 signed · Tier {credential.credential?.tier}</p>
-                      </div>
-                    </div>
-                    <ClockIcon className="w-6 h-6 text-[var(--color-muted-strong)]" />
+                {!account && (
+                  <p className="text-sm text-[var(--color-muted-strong)] animate-fade-in" style={{ animationDelay: '300ms' }}>
+                    Connect your MetaMask wallet to issue a credential.
+                  </p>
+                )}
+                {walletError && (
+                  <p className="mt-2 text-sm text-[var(--color-trading-down)] animate-fade-in">{walletError}</p>
+                )}
+                {!isLocalNetwork && account && (
+                  <div className="mt-4 animate-fade-in">
+                    <p className="text-sm text-[var(--color-trading-down)] mb-2">Connect to local Hardhat network (0x7a69) to interact with the contract.</p>
+                    <button onClick={switchToLocalNetwork} className="btn-ghost text-sm">
+                      Switch to Hardhat Network
+                    </button>
                   </div>
-                  <div className="space-y-4 text-sm">
-                    <div className="flex justify-between pb-2 border-b border-[var(--color-hairline-dark)]">
-                      <span className="text-[var(--color-muted-strong)]">Tier</span>
-                      <span className="font-mono font-bold text-[var(--color-primary)]">{credential.credential?.tier || 'Unknown'}</span>
-                    </div>
-                    <div className="flex justify-between pb-2 border-b border-[var(--color-hairline-dark)]">
-                      <span className="text-[var(--color-muted-strong)]">Wallet</span>
-                      <span className="font-mono text-xs text-[var(--color-body-dark)] break-all">{credential.credential?.userAddress}</span>
-                    </div>
-                    <div className="flex justify-between pb-2 border-b border-[var(--color-hairline-dark)]">
-                      <span className="text-[var(--color-muted-strong)]">Tier Hash</span>
-                      <span className="font-mono text-xs text-[var(--color-muted)] break-all">{credential.tierHash}</span>
-                    </div>
-                    <div className="flex justify-between pb-2 border-b border-[var(--color-hairline-dark)]">
-                      <span className="text-[var(--color-muted-strong)]">Evaluation</span>
-                      <span className="font-mono text-xs text-[var(--color-body-dark)]">{credential.evaluation?.tier} tier · {credential.evaluation?.repaymentRecords || 0} records · ${credential.evaluation?.totalPaidUSD || 0}</span>
-                    </div>
-                    {typeof credential.credential?.issuedAt === 'number' && (
-                      <div className="flex justify-between pb-2 border-b border-[var(--color-hairline-dark)]">
-                        <span className="text-[var(--color-muted-strong)]">Issued</span>
-                        <span className="font-mono text-xs text-[var(--color-body-dark)]">{new Date(credential.credential.issuedAt * 1000).toLocaleTimeString()}</span>
-                      </div>
-                    )}
-                  </div>
-                  <p className="mt-4 text-xs text-[var(--color-muted-strong)]">Signature and tier are authoritative from backend. Client does not control tier.</p>
-                </div>
+                )}
+                {backendError && (
+                  <p className="mt-2 text-sm text-[var(--color-trading-down)] animate-fade-in">{backendError}</p>
+                )}
               </div>
-            )}
-            {credential?.progress?.nextTier && (
-              <div className="mt-8 max-w-2xl mx-auto animate-fade-in animate-slide-up" style={{ animationDelay: '500ms' }}>
-                <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)]">
-                  <h3 className="text-[var(--color-primary)] font-bold mb-4">Progress toward Tier {credential.progress.nextTier}</h3>
-                  <ul className="space-y-4">
-                    {credential.progress.requirements.map((r, i) => {
-                      const pct = Math.min(100, Math.round(((Number(r.have) || 0) / r.need) * 100));
-                      return (
-                        <li key={i} className="flex flex-col gap-2">
+              <div className="hidden md:flex justify-center animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-[var(--color-primary)]/10 rounded-2xl blur-[60px]"></div>
+                  <div className="relative z-10 bg-[var(--color-surface-card-dark)] rounded-2xl border border-[var(--color-hairline-dark)] p-6 max-w-md text-left">
+                    <div className="flex items-center justify-between mb-5">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)] text-[var(--color-ink)] flex items-center justify-center font-bold">
+                          {credential?.credential?.tier || '—'}
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-white">Your Credential</div>
+                          <div className="text-[10px] text-[var(--color-muted)]">EIP-712 · 24h expiry</div>
+                        </div>
+                      </div>
+                      <ClockIcon className="w-5 h-5 text-[var(--color-muted-strong)]" />
+                    </div>
+                    <div className="space-y-3 text-sm">
+                      {credential && (
+                        <>
+                          <div className="flex justify-between pb-1 border-b border-[var(--color-hairline-dark)]">
+                            <span className="text-[var(--color-muted)]">Tier</span>
+                            <span className="font-mono text-xs text-[var(--color-primary)]">{credential.credential?.tier}</span>
+                          </div>
+                          <div className="flex justify-between pb-1 border-b border-[var(--color-hairline-dark)]">
+                            <span className="text-[var(--color-muted)]">Wallet</span>
+                            <span className="font-mono text-[10px] text-[var(--color-body-dark)] truncate">{credential.credential?.userAddress}</span>
+                          </div>
+                          <div className="flex justify-between pb-1 border-b border-[var(--color-hairline-dark)]">
+                            <span className="text-[var(--color-muted)]">Tier Hash</span>
+                            <span className="font-mono text-[10px] text-[var(--color-muted)] truncate">{credential.tierHash}</span>
+                          </div>
                           <div className="flex justify-between">
-                            <span className="text-sm">{r.met ? '✓' : '○'} {r.label}</span>
-                            <span className="font-mono text-xs text-[var(--color-muted)]">{r.unit}{r.have} / {r.unit}{r.need}</span>
+                            <span className="text-[var(--color-muted)]">Evaluation</span>
+                            <span className="font-mono text-[10px] text-[var(--color-body-dark)]">{credential.evaluation?.tier || '—'} tier · ${credential.evaluation?.totalPaidUSD || 0}</span>
                           </div>
-                          <div className="h-2 rounded-full bg-[var(--color-surface-elevated-dark)] overflow-hidden">
-                            <div className={"h-full rounded-full transition-all duration-700 " + (r.met ? 'bg-[var(--color-trading-up)]' : 'bg-[var(--color-primary)]')} style={{ width: pct + '%' }} />
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                  <p className="mt-4 text-xs text-[var(--color-muted-strong)]">Repay loans on-chain to lift your tier — tiers only improve with verified repayments.</p>
+                        </>
+                      )}
+                      {!credential && (
+                        <div className="flex flex-col items-center gap-3 py-4 opacity-50">
+                          <div className="w-8 h-8 rounded-full bg-[var(--color-surface-elevated-dark)]"></div>
+                          <div className="text-[10px] text-[var(--color-muted)]">No credential yet</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-            )}
-            {credential?.progress && !credential.progress.nextTier && (
-              <div className="mt-8 max-w-2xl mx-auto text-sm text-[var(--color-trading-up)] animate-fade-in" style={{ animationDelay: '500ms' }}>
-                ✓ Top tier unlocked — no further credit requirements.
-              </div>
-            )}
+            </div>
           </div>
+
+          {/* Features grid */}
+          <section className="mt-16 px-0 pt-12 border-t border-[var(--color-hairline-dark)]">
+            <div className="container">
+              <div className="grid sm:grid-cols-3 gap-5">
+                <div className="card-lift stagger-1 card animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
+                  <ShieldIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" />
+                  <h3 className="text-sm font-bold text-white mb-2">Privacy-First</h3>
+                  <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
+                    EIP-712 signed credentials prove your tier without exposing raw financial data.
+                  </p>
+                </div>
+                <div className="card-lift stagger-2 card animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
+                  <TrendingUpIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" />
+                  <h3 className="text-sm font-bold text-white mb-2">Undercollateralized</h3>
+                  <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
+                    Smart contracts verify your credential and unlock undercollateralized loan terms.
+                  </p>
+                </div>
+                <div className="card-lift stagger-3 card animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
+                  <WalletIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" />
+                  <h3 className="text-sm font-bold text-white mb-2">Wallet-Linked</h3>
+                  <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
+                    Your credit reputation travels with your MetaMask wallet. Portable and verifiable.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {credential && (
+            <div className="mt-12 max-w-md mx-auto animate-fade-in animate-slide-up" style={{ animationDelay: '400ms' }}>
+              <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-6 border border-[var(--color-hairline-dark)] text-left">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-[var(--color-primary)] text-[var(--color-ink)] flex items-center justify-center font-bold text-lg">
+                      {credential.credential?.tier}
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-white">Credit Credential Issued</h3>
+                      <p className="text-[11px] text-[var(--color-muted-strong)]">EIP-712 signed · Tier {credential.credential?.tier}</p>
+                    </div>
+                  </div>
+                  <ClockIcon className="w-5 h-5 text-[var(--color-muted-strong)]" />
+                </div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between pb-1 border-b border-[var(--color-hairline-dark)]">
+                    <span className="text-[var(--color-muted)]">Tier</span>
+                    <span className="font-mono text-xs text-[var(--color-primary)]">{credential.credential?.tier || 'Unknown'}</span>
+                  </div>
+                  <div className="flex justify-between pb-1 border-b border-[var(--color-hairline-dark)]">
+                    <span className="text-[var(--color-muted)]">Wallet</span>
+                    <span className="font-mono text-[11px] text-[var(--color-body-dark)] truncate">{credential.credential?.userAddress}</span>
+                  </div>
+                  <div className="flex justify-between pb-1 border-b border-[var(--color-hairline-dark)]">
+                    <span className="text-[var(--color-muted)]">Tier Hash</span>
+                    <span className="font-mono text-[11px] text-[var(--color-muted)] truncate">{credential.tierHash}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[var(--color-muted)]">Evaluation</span>
+                    <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{credential.evaluation?.tier || '—'} tier · ${credential.evaluation?.totalPaidUSD || 0}</span>
+                  </div>
+                  {typeof credential.credential?.issuedAt === 'number' && (
+                    <div className="flex justify-between">
+                      <span className="text-[var(--color-muted)]">Issued</span>
+                      <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{new Date(credential.credential.issuedAt * 1000).toLocaleTimeString()}</span>
+                    </div>
+                  )}
+                </div>
+                <p className="mt-4 text-[11px] text-[var(--color-muted-strong)]">Signature and tier are authoritative from backend. Client does not control tier.</p>
+              </div>
+            </div>
+          )}
+          {credential?.progress?.nextTier && (
+            <div className="mt-8 max-w-md mx-auto animate-fade-in animate-slide-up" style={{ animationDelay: '500ms' }}>
+              <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-6 border border-[var(--color-hairline-dark)]">
+                <h3 className="text-[var(--color-primary)] font-bold text-sm mb-4">Progress toward Tier {credential.progress.nextTier}</h3>
+                <ul className="space-y-3">
+                  {credential.progress.requirements.map((r, i) => {
+                    const pct = Math.min(100, Math.round(((Number(r.have) || 0) / r.need) * 100));
+                    return (
+                      <li key={i} className="flex flex-col gap-1.5">
+                        <div className="flex justify-between">
+                          <span className="text-xs">{r.met ? '✓' : '○'} {r.label}</span>
+                          <span className="font-mono text-[11px] text-[var(--color-muted)]">{r.unit}{r.have} / {r.unit}{r.need}</span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-[var(--color-surface-elevated-dark)] overflow-hidden">
+                          <div className={"h-full rounded-full transition-all duration-700 " + (r.met ? 'bg-[var(--color-trading-up)]' : 'bg-[var(--color-primary)]')} style={{ width: pct + '%' }} />
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <p className="mt-3 text-[11px] text-[var(--color-muted-strong)]">Repay loans on-chain to lift your tier — tiers only improve with verified repayments.</p>
+              </div>
+            </div>
+          )}
+          {credential?.progress && !credential.progress.nextTier && (
+            <div className="mt-8 max-w-md mx-auto text-xs text-[var(--color-trading-up)] animate-fade-in" style={{ animationDelay: '500ms' }}>
+              ✓ Top tier unlocked — no further credit requirements.
+            </div>
+          )}
         </section>
       </div>
 
+      {/* Loan Terms */}
       {credential && tierInfo && (
-        <section className="px-6 pt-8 pb-16">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold text-white mb-6">Loan Terms (From Contract)</h2>
-            <div className="grid md:grid-cols-3 gap-4 mb-8">
-              <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-6 border border-[var(--color-hairline-dark)]">
-                <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Tier</div>
-                <div className="text-3xl font-bold text-[var(--color-primary)]">{credential.credential.tier}</div>
-              </div>
-              <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-6 border border-[var(--color-hairline-dark)]">
-                <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Max Loan</div>
-                <div className="text-3xl font-bold text-white">{tierInfo.maxETH} ETH</div>
-                <div className="text-[10px] mt-2 text-[var(--color-muted)]">{tierTermsOnChain ? 'read from contract' : 'fallback until contract read completes'}</div>
-              </div>
-              <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-6 border border-[var(--color-hairline-dark)]">
-                <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Fixed Rate</div>
-                <div className="text-3xl font-bold text-white">{tierInfo.ratePercent}%</div>
-                <div className="text-[10px] mt-2 text-[var(--color-muted)]">{tierTermsOnChain ? 'read from contract' : 'fallback until contract read completes'}</div>
-              </div>
+        <section className="container px-0 pt-8 pb-16">
+          <h2 className="text-xl font-bold text-white mb-6">Loan Terms (From Contract)</h2>
+          <div className="grid sm:grid-cols-3 gap-4 mb-8">
+            <div className="card">
+              <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Tier</div>
+              <div className="text-2xl font-bold text-[var(--color-primary)]">{credential.credential.tier}</div>
             </div>
-            <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)]">
-              <div className="flex justify-between mb-3"><span className="text-[var(--color-muted-strong)]">Principal</span> <span className="font-mono text-[var(--color-body-dark)]">{tierInfo.maxETH} ETH</span></div>
-              <div className="flex justify-between mb-3"><span className="text-[var(--color-muted-strong)]">Fixed Interest</span> <span className="font-mono text-[var(--color-body-dark)]">{parseFloat(tierInfo.maxETH) * parseFloat(tierInfo.ratePercent) / 100} ETH</span></div>
-              <div className="border-t border-[var(--color-hairline-dark)] pt-3 flex justify-between font-bold text-[var(--color-primary)]"><span>Total Repayment</span> <span className="font-mono">{(parseFloat(tierInfo.maxETH) * (1 + parseFloat(tierInfo.ratePercent) / 100)).toFixed(4)} ETH</span></div>
+            <div className="card">
+              <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Max Loan</div>
+              <div className="text-2xl font-bold text-white">{tierInfo.maxETH} ETH</div>
+              <div className="text-[10px] mt-2 text-[var(--color-muted)]">{tierTermsOnChain ? 'read from contract' : 'fallback until contract read completes'}</div>
             </div>
-            <p className="mt-4 text-xs text-[var(--color-muted-strong)]">Borrowing depends on available pool liquidity and contract validation. Maximum limits are contract-enforced.</p>
-            <div className="mt-8 flex gap-4">
-              <button onClick={handleBorrow} disabled={!credential || !isLocalNetwork || hasActiveLoan || busy}
-                className="px-10 py-4 rounded-xl bg-[var(--color-primary)] text-[var(--color-ink)] font-bold text-lg hover:bg-[var(--color-primary-active)] transition-all disabled:opacity-50 disabled:cursor-not-allowed btn-press">
-                {hasActiveLoan ? 'Repay Loan First' : 'Borrow ETH'}
-              </button>
-              <button onClick={handleRepay} disabled={!loanState || !loanState.borrower || loanState.borrower === '0x0000000000000000000000000000000000000000' || loanState.repaid || !isLocalNetwork || busy} className="px-10 py-4 rounded-xl bg-[var(--color-surface-elevated-dark)] text-[var(--color-body-dark)] font-bold text-lg border border-[var(--color-hairline-dark)] hover:bg-[var(--color-surface-card-dark)] transition-all disabled:opacity-40 disabled:cursor-not-allowed btn-press">
-                Repay Loan
-              </button>
+            <div className="card">
+              <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Fixed Rate</div>
+              <div className="text-2xl font-bold text-white">{tierInfo.ratePercent}%</div>
+              <div className="text-[10px] mt-2 text-[var(--color-muted)]">{tierTermsOnChain ? 'read from contract' : 'fallback until contract read completes'}</div>
             </div>
+          </div>
+          <div className="card">
+            <div className="flex justify-between mb-3"><span className="text-[var(--color-muted-strong)]">Principal</span> <span className="font-mono text-[var(--color-body-dark)]">{tierInfo.maxETH} ETH</span></div>
+            <div className="flex justify-between mb-3"><span className="text-[var(--color-muted-strong)]">Fixed Interest</span> <span className="font-mono text-[var(--color-body-dark)]">{parseFloat(tierInfo.maxETH) * parseFloat(tierInfo.ratePercent) / 100} ETH</span></div>
+            <div className="border-t border-[var(--color-hairline-dark)] pt-3 flex justify-between font-bold text-[var(--color-primary)]"><span>Total Repayment</span> <span className="font-mono">{(parseFloat(tierInfo.maxETH) * (1 + parseFloat(tierInfo.ratePercent) / 100)).toFixed(4)} ETH</span></div>
+          </div>
+          <p className="mt-4 text-[11px] text-[var(--color-muted-strong)]">Borrowing depends on available pool liquidity and contract validation. Maximum limits are contract-enforced.</p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <button onClick={handleBorrow} disabled={!credential || !isLocalNetwork || hasActiveLoan || busy}
+              className="btn-primary text-base">
+              {hasActiveLoan ? 'Repay Loan First' : 'Borrow ETH'}
+            </button>
+            <button onClick={handleRepay} disabled={!loanState || !loanState.borrower || loanState.borrower === '0x0000000000000000000000000000000000000000' || loanState.repaid || !isLocalNetwork || busy} className="btn-secondary text-base">
+              Repay Loan
+            </button>
           </div>
         </section>
       )}
 
-      <section className="px-6 pt-8 pb-16">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-white mb-6">Pool &amp; Loan State (On-Chain)</h2>
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="card-lift stagger-1 bg-[var(--color-surface-card-dark)] rounded-2xl p-7 border border-[var(--color-hairline-dark)] animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
-              <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-3">Pool Liquidity</div>
-              <div className="text-3xl font-mono font-bold text-white">{poolLiquidity} ETH</div>
+      {/* Pool & Loan State */}
+      <section className="container px-0 pt-8 pb-16">
+        <h2 className="text-xl font-bold text-white mb-6">Pool &amp; Loan State (On-Chain)</h2>
+        <div className="grid sm:grid-cols-3 gap-5 mb-8">
+          <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
+            <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Pool Liquidity</div>
+            <div className="text-2xl font-mono font-bold text-white">{poolLiquidity} ETH</div>
+          </div>
+          <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
+            <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Your Accrued Yield</div>
+            <div className="text-2xl font-mono font-bold text-[var(--color-primary)]">{earnedYield !== null ? earnedYield + ' ETH' : '—'}</div>
+          </div>
+          <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
+            <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Total Deposited</div>
+            <div className="text-2xl font-mono font-bold text-white">{loanState?.principal ? loanState.principal : '0'} ETH</div>
+          </div>
+        </div>
+        <div className="card">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h3 className="text-base font-bold text-white">Your Position</h3>
+              <p className="text-[11px] text-[var(--color-muted-strong)]">Borrower state on the lending pool contract.</p>
             </div>
-            <div className="card-lift stagger-2 bg-[var(--color-surface-card-dark)] rounded-2xl p-7 border border-[var(--color-hairline-dark)] animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
-              <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-3">Your Accrued Yield</div>
-              <div className="text-3xl font-mono font-bold text-[var(--color-primary)]">{earnedYield !== null ? earnedYield + ' ETH' : '—'}</div>
+            <CoinsIcon className="w-6 h-6 text-[var(--color-muted-strong)]" />
+          </div>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center p-3 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
+              <div className="flex items-center gap-2">
+                <LockIcon className="w-3 h-3 text-[var(--color-muted-strong)]" />
+                <span className="text-sm text-[var(--color-body-dark)]">Borrower</span>
+              </div>
+              <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{loanState && loanState.borrower ? loanState.borrower : 'None'}</span>
             </div>
-            <div className="card-lift stagger-3 bg-[var(--color-surface-card-dark)] rounded-2xl p-7 border border-[var(--color-hairline-dark)] animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
-              <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-3">Total Deposited</div>
-              <div className="text-3xl font-mono font-bold text-white">{loanState?.principal ? loanState.principal : '0'} ETH</div>
+            <div className="flex justify-between items-center p-3 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
+              <div className="flex items-center gap-2">
+                <PercentIcon className="w-3 h-3 text-[var(--color-muted-strong)]" />
+                <span className="text-sm text-[var(--color-body-dark)]">Principal</span>
+              </div>
+              <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{loanState && loanState.principal ? loanState.principal + ' ETH' : '—'}</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
+              <div className="flex items-center gap-2">
+                <ClockIcon className="w-3 h-3 text-[var(--color-muted-strong)]" />
+                <span className="text-sm text-[var(--color-body-dark)]">Repayment Due</span>
+              </div>
+              <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{loanState && loanState.repaymentDue ? loanState.repaymentDue + ' ETH' : '—'}</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
+              <div className="flex items-center gap-2">
+                <ShieldIcon className="w-3 h-3 text-[var(--color-muted-strong)]" />
+                <span className="text-sm text-[var(--color-body-dark)]">Tier</span>
+              </div>
+              <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{loanState && loanState.tier ? loanState.tier : '—'}</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
+              <div className="flex items-center gap-2">
+                <CheckIcon className="w-3 h-3 text-[var(--color-trading-up)]" />
+                <span className="text-sm text-[var(--color-body-dark)]">Repaid</span>
+              </div>
+              <span className={`font-mono text-[11px] ${loanState?.repaid ? 'text-[var(--color-trading-up)]' : 'text-[var(--color-muted)]'}`}>
+                {loanState ? (loanState.repaid ? 'Yes' : 'No') : '—'}
+              </span>
             </div>
           </div>
-          <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)]">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-lg font-bold text-white">Your Position</h3>
-                <p className="text-sm text-[var(--color-muted-strong)]">Borrower state on the lending pool contract.</p>
-              </div>
-              <CoinsIcon className="w-10 h-10 text-[var(--color-muted-strong)]" />
-            </div>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center p-4 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
-                <div className="flex items-center gap-2">
-                  <LockIcon className="w-4 h-4 text-[var(--color-muted-strong)]" />
-                  <span className="text-sm text-[var(--color-body-dark)]">Borrower</span>
-                </div>
-                <span className="font-mono text-xs text-[var(--color-body-dark)]">{loanState && loanState.borrower ? loanState.borrower : 'None'}</span>
-              </div>
-              <div className="flex justify-between items-center p-4 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
-                <div className="flex items-center gap-2">
-                  <PercentIcon className="w-4 h-4 text-[var(--color-muted-strong)]" />
-                  <span className="text-sm text-[var(--color-body-dark)]">Principal</span>
-                </div>
-                <span className="font-mono text-[var(--color-body-dark)]">{loanState && loanState.principal ? loanState.principal + ' ETH' : '—'}</span>
-              </div>
-              <div className="flex justify-between items-center p-4 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
-                <div className="flex items-center gap-2">
-                  <ClockIcon className="w-4 h-4 text-[var(--color-muted-strong)]" />
-                  <span className="text-sm text-[var(--color-body-dark)]">Repayment Due</span>
-                </div>
-                <span className="font-mono text-[var(--color-body-dark)]">{loanState && loanState.repaymentDue ? loanState.repaymentDue + ' ETH' : '—'}</span>
-              </div>
-              <div className="flex justify-between items-center p-4 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
-                <div className="flex items-center gap-2">
-                  <ShieldIcon className="w-4 h-4 text-[var(--color-muted-strong)]" />
-                  <span className="text-sm text-[var(--color-body-dark)]">Tier</span>
-                </div>
-                <span className="font-mono text-[var(--color-body-dark)]">{loanState && loanState.tier ? loanState.tier : '—'}</span>
-              </div>
-              <div className="flex justify-between items-center p-4 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
-                <div className="flex items-center gap-2">
-                  <CheckIcon className="w-4 h-4 text-[var(--color-trading-up)]" />
-                  <span className="text-sm text-[var(--color-body-dark)]">Repaid</span>
-                </div>
-                <span className={`font-mono text-xs ${loanState?.repaid ? 'text-[var(--color-trading-up)]' : 'text-[var(--color-muted)]'}`}>
-                  {loanState ? (loanState.repaid ? 'Yes' : 'No') : '—'}
-                </span>
-              </div>
-            </div>
-            <div className="mt-8 grid md:grid-cols-2 gap-6">
-              <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)]">
-                <h4 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                  <SendIcon className="w-4 h-4 text-[var(--color-primary)]" />
-                  Deposit into Pool
-                </h4>
-                <p className="text-xs text-[var(--color-muted-strong)] mb-6">Deposit ETH into the lending pool — you accrue a proportional share of repayment interest.</p>
-                <div className="input-focus flex gap-3">
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    placeholder="0.1"
-                    value={depositAmount}
-                    onChange={(e) => setDepositAmount(e.target.value.replace(/[^0-9.]/g, ''))}
-                    disabled={!account || depositBusy}
-                    className="flex-1 rounded-xl bg-[var(--color-surface-elevated-dark)] border border-[var(--color-hairline-dark)] px-4 py-3 text-sm font-mono text-[var(--color-body-dark)] focus:outline-none focus:border-[var(--color-primary)] disabled:opacity-40"
-                  />
-                  <button
-                    onClick={handleDeposit}
-                    disabled={!account || depositBusy || !depositAmount || parseFloat(depositAmount) <= 0 || isNaN(parseFloat(depositAmount))}
-                    className="px-6 py-3 rounded-xl bg-[var(--color-primary)] text-[var(--color-ink)] font-bold text-sm hover:bg-[var(--color-primary-active)] transition-all disabled:opacity-40 disabled:cursor-not-allowed btn-press"
-                  >
-                    {depositBusy ? 'Depositing...' : 'Deposit'}
-                  </button>
-                </div>
-              </div>
-              <div className="bg-[var(--color-surface-card-dark)] rounded-2xl p-8 border border-[var(--color-hairline-dark)]">
-                <h4 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                  <CheckIcon className="w-4 h-4 text-[var(--color-primary)]" />
-                  Claim Interest
-                </h4>
-                <p className="text-xs text-[var(--color-muted-strong)] mb-6">Withdraw your accrued-but-unclaimed interest from the pool.</p>
+          <div className="mt-8 grid sm:grid-cols-2 gap-5">
+            <div className="card">
+              <h4 className="text-xs font-bold text-white mb-4 flex items-center gap-2">
+                <SendIcon className="w-3 h-3 text-[var(--color-primary)]" />
+                Deposit into Pool
+              </h4>
+              <p className="text-[11px] text-[var(--color-muted-strong)] mb-5">Deposit ETH into the lending pool — you accrue a proportional share of repayment interest.</p>
+              <div className="input-focus flex gap-3">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="0.1"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value.replace(/[^0-9.]/g, ''))}
+                  disabled={!account || depositBusy}
+                  className="input-field"
+                />
                 <button
-                  onClick={handleClaim}
-                  disabled={!account || claimBusy || !earnedYield || parseFloat(earnedYield) <= 0}
-                  className={`w-full py-3 rounded-xl font-bold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed btn-press ${
-                    earnedYield !== null && parseFloat(earnedYield) > 0
-                      ? 'bg-[var(--color-primary)] text-[var(--color-ink)] hover:bg-[var(--color-primary-active)]'
-                      : 'bg-[var(--color-surface-elevated-dark)] text-[var(--color-body-dark)] border border-[var(--color-hairline-dark)]'
-                  }`}
+                  onClick={handleDeposit}
+                  disabled={!account || depositBusy || !depositAmount || parseFloat(depositAmount) <= 0 || isNaN(parseFloat(depositAmount))}
+                  className="btn-primary text-sm"
                 >
-                  {claimBusy ? 'Claiming...' : earnedYield !== null && parseFloat(earnedYield) > 0 ? 'Claim Interest' : 'No Yield to Claim'}
+                  {depositBusy ? 'Depositing...' : 'Deposit'}
                 </button>
               </div>
             </div>
-            <p className="mt-4 text-xs text-[var(--color-muted)]">Deposit first: only pool depositors accrue repayment interest (see contracts/DEPLOY_REF.md for the proportional split details).</p>
+            <div className="card">
+              <h4 className="text-xs font-bold text-white mb-4 flex items-center gap-2">
+                <CheckIcon className="w-3 h-3 text-[var(--color-primary)]" />
+                Claim Interest
+              </h4>
+              <p className="text-[11px] text-[var(--color-muted-strong)] mb-5">Withdraw your accrued-but-unclaimed interest from the pool.</p>
+              <button
+                onClick={handleClaim}
+                disabled={!account || claimBusy || !earnedYield || parseFloat(earnedYield) <= 0}
+                className={`w-full py-3 rounded-xl font-bold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 ${
+                  earnedYield !== null && parseFloat(earnedYield) > 0
+                    ? 'bg-[var(--color-primary)] text-[var(--color-ink)] hover:bg-[var(--color-primary-active)]'
+                    : 'bg-[var(--color-surface-elevated-dark)] text-[var(--color-body-dark)] border border-[var(--color-hairline-dark)]'
+                }`}
+              >
+                {claimBusy ? 'Claiming...' : earnedYield !== null && parseFloat(earnedYield) > 0 ? 'Claim Interest' : 'No Yield to Claim'}
+              </button>
+            </div>
           </div>
-          {contractError && <p className="mt-4 text-sm text-[var(--color-trading-down)]">{contractError}</p>}
+          <p className="mt-4 text-[11px] text-[var(--color-muted)]">Deposit first: only pool depositors accrue repayment interest (see contracts/DEPLOY_REF.md for the proportional split details).</p>
         </div>
+        {contractError && <p className="mt-4 text-sm text-[var(--color-trading-down)]">{contractError}</p>}
       </section>
 
+      {/* Transaction State */}
       {txState.status !== 'idle' && (
-        <section className="px-6 pt-4">
-          <div className={`max-w-3xl mx-auto rounded-2xl p-6 border ${
+        <section className="container px-0 pt-4">
+          <div className={`rounded-2xl p-6 border ${
             txState.status === 'confirmed'
               ? 'bg-[var(--color-trading-up)]/10 border-[var(--color-trading-up)]'
               : txState.status === 'failed'
@@ -702,12 +753,12 @@ export default function App() {
                 : 'bg-[var(--color-surface-card-dark)] border-[var(--color-hairline-dark)]'
           } toast-enter`}>
             <div className="flex items-center gap-3">
-              {txState.status === 'confirmed' && <CheckIcon className="w-5 h-5 text-[var(--color-trading-up)]" />}
-              {txState.status === 'failed' && <LockIcon className="w-5 h-5 text-[var(--color-trading-down)]" />}
-              {(txState.status === 'submitting' || txState.status === 'pending') && <ClockIcon className="w-5 h-5 animate-pulse-slow text-[var(--color-muted-strong)]" />}
+              {txState.status === 'confirmed' && <CheckIcon className="w-4 h-4 text-[var(--color-trading-up)]" />}
+              {txState.status === 'failed' && <LockIcon className="w-4 h-4 text-[var(--color-trading-down)]" />}
+              {(txState.status === 'submitting' || txState.status === 'pending') && <ClockIcon className="w-4 h-4 animate-pulse-slow text-[var(--color-muted-strong)]" />}
               <div>
                 <div className="font-bold text-sm">{txState.status === 'submitting' ? 'Submitting...' : txState.status === 'pending' ? 'Pending...' : txState.status === 'confirmed' ? 'Confirmed' : 'Failed'}</div>
-                <div className="text-xs text-[var(--color-muted-strong)]">{txState.message}</div>
+                <div className="text-[11px] text-[var(--color-muted-strong)]">{txState.message}</div>
               </div>
               {txState.hash && (
                 <div className="ml-auto text-[var(--color-muted)] text-[10px] font-mono break-all max-w-xs">
@@ -719,23 +770,22 @@ export default function App() {
         </section>
       )}
 
-      <section id="how-it-works" className="px-6 pt-16 pb-20 border-t border-[var(--color-hairline-dark)]">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-10">
-            <h2 className="text-2xl font-bold text-white">How CredPass Works</h2>
-            <a href="#features" className="text-xs text-[var(--color-primary)] font-medium hover:underline">Back to top →</a>
-          </div>
-          <CredentialFlow />
+      {/* How It Works */}
+      <section id="how-it-works" className="container px-0 pt-16 pb-20 border-t border-[var(--color-hairline-dark)]">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-xl font-bold text-white">How CredPass Works</h2>
+          <a href="#features" className="text-xs text-[var(--color-primary)] font-medium hover:underline">Back to top →</a>
         </div>
+        <CredentialFlow />
       </section>
 
-      <footer className="px-6 py-12 border-t border-[var(--color-hairline-dark)] bg-[var(--color-surface-card-dark)]">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <footer className="container px-0 pt-12 pb-8 border-t border-[var(--color-hairline-dark)] bg-[var(--color-surface-card-dark)]">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
-            <ShieldIcon className="w-6 h-6 fill-[var(--color-primary)]" />
-            <span className="text-base font-bold text-[var(--color-primary)] tracking-tight">CredPass</span>
+            <ShieldIcon className="w-5 h-5 fill-[var(--color-primary)]" />
+            <span className="text-sm font-bold text-[var(--color-primary)] tracking-tight">CredPass</span>
           </div>
-          <p className="text-xs text-[var(--color-muted)]">Privacy-first credit passport · EIP-712 credentials · Local Hardhat network</p>
+          <p className="text-[11px] text-[var(--color-muted)]">Privacy-first credit passport · EIP-712 credentials · Local Hardhat network</p>
         </div>
       </footer>
     </main>
