@@ -457,6 +457,21 @@ export default function App() {
           </div>
         )}
 
+        {account && (
+          <div className="container px-0 mb-8">
+            <div className="flex items-center justify-between px-6 py-4 rounded-xl bg-[var(--color-surface-card-dark)] border border-[var(--color-hairline-dark)]">
+              <div className="flex items-center gap-3">
+                <WalletIcon className="w-5 h-5 text-[var(--color-primary)]" />
+                <div>
+                  <div className="text-xs font-bold text-white">Welcome back, {shortenedAddress}</div>
+                  <div className="text-[11px] text-[var(--color-muted-strong)]">Wallet connected · Ready to borrow</div>
+                </div>
+              </div>
+              <a href="#features" className="text-xs text-[var(--color-primary)] font-medium hover:underline transition-colors">Explore features →</a>
+            </div>
+          </div>
+        )}
+
         {/* Hero */}
         <section id="features" className="relative overflow-hidden pt-6">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[var(--color-primary)]/10 rounded-full blur-[100px] pointer-events-none"></div>
