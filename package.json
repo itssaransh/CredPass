@@ -1,0 +1,39 @@
+{
+  "name": "credpass",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:node": "cd contracts && npx hardhat node",
+    "dev:backend": "cd backend && node --watch server.js",
+    "dev:web": "vite",
+    "dev:db": "docker-compose up -d",
+    "dev:all": "concurrently -n node,api,web -c blue,green,magenta \"npm run dev:node\" \"npm run dev:backend\" \"npm run dev:web\"",
+    "test:contracts": "cd contracts && npx hardhat test",
+    "test:e2e": "cd contracts && npx hardhat run scripts/e2e-local.cjs --network localhost",
+    "test:backend": "cd backend && node test/issue.test.js && node test/evaluation.test.js && node test/manipulation.test.js && node test/integration.test.js && node test/faucet.test.js",
+    "build": "vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "ethers": "^6.13.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^8.0.1",
+    "@playwright/test": "^1.64.1",
+    "@rollup/pluginutils": "^5.4.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.6",
+    "oxlint": "^1.88.0",
+    "vite": "^8.3.4",
+    "vite-react-mcp": "^0.3.0"
+  }
+}

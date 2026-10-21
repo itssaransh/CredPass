@@ -1,0 +1,100 @@
+# CredPass CI — automated suite battery (IMPROVEMENT_PLAN.md item 15)
+# Runs: contract compile + unit tests, local hardhat node + deploy + E2E,
+# backend static + faucet + supertest integration tests (needs postgres + node
+# + backend), frontend production build, and the wallet-less Playwright smoke.
+# MetaMask-gated verification (real extension flow) is MANUAL ONLY, forever.
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: credpass
+          POSTGRES_PASSWORD: credpass
+          POSTGRES_DB: credpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U credpass"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://credpass:credpass@localhost:5432/credpass
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install frontend deps
+        run: npm ci
+
+      - name: Install backend deps
+        run: npm ci --prefix backend
+
+      - name: Install contracts deps
+        run: npm ci --prefix contracts
+
+      - name: Compile contracts
+        run: npx --prefix contracts hardhat compile
+
+      - name: Contract unit tests
+        run: npx --prefix contracts hardhat test
+
+      - name: Database schema
+        run: psql postgresql://credpass:credpass@localhost:5432/credpass -f backend/db/init.sql
+
+      - name: Start local hardhat node (background)
+        run: npx --prefix contracts hardhat node & sleep 5
+
+      - name: Deploy (auto-writes deploy-local.json)
+        run: npx --prefix contracts hardhat run scripts/deploy.cjs --network localhost
+
+      # E2E also funds the pool with 5 ETH (fresh deployments start empty)
+      - name: E2E A–G against deploy-local.json
+        run: npx --prefix contracts hardhat run scripts/e2e-local.cjs --network localhost
+
+      - name: Backend static guard tests
+        run: node test/issue.test.js && node test/evaluation.test.js && node test/manipulation.test.js
+        working-directory: backend
+
+      - name: Start backend (background)
+        run: nohup node server.js & sleep 3
+        working-directory: backend
+
+      - name: Backend faucet integration test
+        run: node test/faucet.test.js
+        working-directory: backend
+
+      # Item 14: spins its own Express app via supertest (ephemeral port) —
+      # DB + hardhat node come from the services/deploy steps above; chain
+      # cases skip gracefully if the node is unreachable.
+      - name: Backend supertest integration suite (incl. stale-config regression)
+        run: node test/integration.test.js
+        working-directory: backend
+
+      - name: Frontend production build
+        run: npm run build
+
+      - name: Install Playwright chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start Vite dev server (background)
+        run: nohup npm run dev & sleep 6
+
+      - name: Playwright smoke (no MetaMask)
+        run: npx playwright test

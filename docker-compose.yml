@@ -1,0 +1,12 @@
+version: "3.9"
+# Postgres only — Redis/Mongo were removed (IMPROVEMENT_PLAN.md item 13):
+# they were never used; rate limiting is in-memory in the backend.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: credpass
+      POSTGRES_PASSWORD: credpass
+      POSTGRES_DB: credpass
+    ports:
+      - "5432:5432"
