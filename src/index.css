@@ -27,18 +27,6 @@
   --animate-slide-in: slideIn 0.5s ease-out forwards;
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-bounce: bounce 0.6s ease-in-out infinite;
-
-  --animate-fade-in: fadeIn 0.5s ease-out forwards;
-  --animate-slide-up: slideUp 0.6s ease-out forwards;
-  --animate-slide-in: slideIn 0.5s ease-out forwards;
-  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-bounce: bounce 0.6s ease-in-out infinite;
-
-  --animate-fade-in: fadeIn 0.5s ease-out forwards;
-  --animate-slide-up: slideUp 0.6s ease-out forwards;
-  --animate-slide-in: slideIn 0.5s ease-out forwards;
-  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-bounce: bounce 0.6s ease-in-out infinite;
 }
 
 @keyframes fadeIn {
@@ -75,6 +63,11 @@
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-15px) rotate(-2deg); }
   100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 @keyframes pulse-glow {
@@ -169,16 +162,6 @@ body {
   border-radius: 4px;
 }
 
-/* Confetti burst */
-.confetti {
-  position: absolute;
-  width: 8px; height: 8px;
-  background: var(--color-primary);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 50;
-}
-
 /* Number counter value */
 .counter-value {
   font-variant-numeric: tabular-nums;
@@ -203,19 +186,54 @@ body {
 
 ::selection { background: var(--color-primary); color: var(--color-ink); }
 
+/* Focus states - accessible */
 *:focus-visible {
   outline: 2px solid var(--color-info);
   outline-offset: 2px;
 }
 
-.btn-press:active { transform: scale(0.97); }
+/* Component layer - stable design primitives */
+@layer components {
+  .container {
+    width: 100%;
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
 
-.card-lift {
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-.card-lift:hover {
-  transform: translateY(-4px);
-  border-color: var(--color-primary);
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[var(--color-primary)] text-[var(--color-ink)] font-bold text-sm transition-colors hover:bg-[var(--color-primary-active)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--color-info)] focus-visible:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[var(--color-surface-elevated-dark)] text-[var(--color-body-dark)] font-bold border border-[var(--color-hairline-dark)] transition-colors hover:bg-[var(--color-surface-card-dark)] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--color-info)] focus-visible:ring-offset-2;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-transparent text-[var(--color-body-dark)] font-bold transition-colors hover:bg-[var(--color-surface-elevated-dark)] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[var(--color-info)] focus-visible:ring-offset-2;
+  }
+
+  .card {
+    @apply rounded-2xl bg-[var(--color-surface-card-dark)] border border-[var(--color-hairline-dark)] p-6;
+  }
+
+  .card-lift {
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-primary);
+  }
+
+  .input-field {
+    @apply w-full rounded-xl bg-[var(--color-surface-elevated-dark)] border border-[var(--color-hairline-dark)] px-4 py-3 text-sm font-mono text-[var(--color-body-dark)] focus:outline-none focus:border-[var(--color-primary)] disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium;
+  }
 }
 
 /* Text glow effects */
@@ -231,62 +249,43 @@ body {
   background-clip: text;
 }
 
+/* Input focus ring */
 .input-focus:focus-within {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 1px var(--color-primary);
 }
 
-.spinner { animation: spin 1s linear infinite; }
-
+/* Status dot pulse */
 .status-dot {
   animation: pulse-dot 2s ease-in-out infinite;
 }
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
 
+/* Section entrance */
 .section-enter { animation: fadeIn 0.6s ease-out both; }
 
+/* Toast notifications */
 .toast-enter { animation: slideIn 0.3s ease-out forwards; }
 .toast-exit { animation: slideIn 0.3s ease-in reverse forwards; }
 
+/* Staggered entrance */
 .stagger-1 { animation-delay: 100ms; }
 .stagger-2 { animation-delay: 200ms; }
 .stagger-3 { animation-delay: 300ms; }
+.stagger-4 { animation-delay: 400ms; }
 
-/* Component layer - stable design primitives */
-@layer components {
-  .container {
-    width: 100%;
-    max-width: 72rem;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+/* Reduced motion - disable animations when user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[var(--color-primary)] text-[var(--color-ink)] font-bold text-sm transition-all hover:bg-[var(--color-primary-active)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  .bg-orb {
+    animation: none !important;
   }
-
-  .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[var(--color-surface-elevated-dark)] text-[var(--color-body-dark)] font-bold border border-[var(--color-hairline-dark)] transition-all hover:bg-[var(--color-surface-card-dark)] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed;
-  }
-
-  .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-transparent text-[var(--color-body-dark)] font-bold transition-all hover:bg-[var(--color-surface-elevated-dark)] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed;
-  }
-
-  .card {
-    @apply rounded-2xl bg-[var(--color-surface-card-dark)] border border-[var(--color-hairline-dark)] p-6;
-  }
-
-  .input-field {
-    @apply w-full rounded-xl bg-[var(--color-surface-elevated-dark)] border border-[var(--color-hairline-dark)] px-4 py-3 text-sm font-mono text-[var(--color-body-dark)] focus:outline-none focus:border-[var(--color-primary)] disabled:opacity-40 disabled:cursor-not-allowed;
-  }
-
-  .badge {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium;
+  .status-dot {
+    animation: none !important;
+    opacity: 1 !important;
   }
 }
