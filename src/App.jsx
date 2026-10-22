@@ -105,8 +105,107 @@ const SendIcon = ({ className = 'w-5 h-5' }) => (
 );
 
 const Skeleton = ({ className = '' }) => (
-  <div className={`animate-pulse bg-[var(--color-surface-elevated-dark)] rounded ${className}`} />
+  <div className={`skeleton-shimmer animate-pulse h-6 rounded ${className}`} />
 );
+
+const AnimatedCounter = ({ value, label, icon: Icon, color = 'text-white', prefix = '', suffix = ' ETH', className = '' }) => {
+  const [displayValue, setDisplayValue] = useState(value);
+  useEffect(() => {
+    const start = 0;
+    const end = parseFloat(value) || 0;
+    const duration = 1200;
+    const startTime = performance.now();
+    const step = (now) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      setDisplayValue((start + eased * (end - start)).toFixed(2));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [value]);
+  return (
+    <div className={`card-lift card animate-fade-in animate-slide-up ${className}`}>
+      <div className="flex items-center justify-between mb-3">
+        <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)]">{label}</div>
+        {Icon && <Icon className="w-5 h-5 text-[var(--color-primary)]" />}
+      </div>
+      <div className="flex items-baseline gap-1">
+        <span className={`counter-value text-xl font-mono font-bold ${color} animate-count-up`}>{prefix}{displayValue}</span>
+        <span className="text-sm text-[var(--color-muted-strong)]">{suffix}</span>
+      </div>
+    </div>
+  );
+};
+
+const Sparkline = ({ points, color = 'var(--color-primary)' }) => {
+  if (!points || points.length < 2) return null;
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = max - min || 1;
+  const path = points.map((p, i) => {
+    const x = (i / (points.length - 1)) * 100;
+    const y = 100 - ((p - min) / range) * 100;
+    return `${i === 0 ? 'M' : 'L'}${x},${y}`;
+  }).join(' ');
+  return (
+    <svg className="w-full h-20" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path className="sparkline-path" d={path} stroke={color} />
+    </svg>
+  );
+};
+
+const RecentActivity = ({ items }) => {
+  return (
+    <div className="relative overflow-hidden h-10">
+      <div className="animate-marquee flex items-center gap-6 whitespace-nowrap">
+        {items.map((item, i) => (
+          <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--color-surface-elevated-dark)] border border-[var(--color-hairline-dark)]">
+            <div className="w-2 h-2 rounded-full bg-[var(--color-trading-up)] animate-pulse-slow" />
+            <span className="text-xs text-[var(--color-body-dark)]">{item.address}</span>
+            <span className="text-xs text-[var(--color-trading-up)]">+{item.amount} ETH</span>
+          </div>
+        ))}
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-canvas-dark)] to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-l from-[var(--color-canvas-dark)] to-transparent" />
+    </div>
+  );
+};
+
+const Confetti = ({ count = 50 }) => {
+  const [particles, setParticles] = useState([]);
+  useEffect(() => {
+    const newParticles = Array.from({ length: count }, () => ({
+      x: Math.random() * 100,
+      y: Math.random() * -50,
+      vx: (Math.random() - 0.5) * 20,
+      vy: Math.random() * 10 + 5,
+      color: ['#fcd535', '#f6465d', '#0ecb81', '#3b82f6'][Math.floor(Math.random() * 4)],
+      size: Math.random() * 6 + 4,
+      life: 1,
+    }));
+    setParticles(newParticles);
+  }, [count]);
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[100]">
+      {particles.map((p, i) => (
+        <div
+          key={i}
+          className="confetti"
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            backgroundColor: p.color,
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            animation: `confetti-fall 2s ease-out forwards`,
+            animationDelay: `${i * 0.03}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 export default function App() {
   const [credential, setCredential] = useState(null);
@@ -364,7 +463,15 @@ export default function App() {
   const busy = txState.status === 'pending' || txState.status === 'submitting';
 
   return (
-    <main className="min-h-screen bg-[var(--color-canvas-dark)] text-[var(--color-body-dark)] selection:bg-[var(--color-primary)] selection:text-[var(--color-ink)] overflow-x-hidden">
+    <main className="min-h-screen bg-[var(--color-canvas-dark)] text-[var(--color-body-dark)] selection:bg-[var(--color-primary)] selection:text-[var(--color-ink)] overflow-x-hidden relative">
+      {/* Decorative background orbs */}
+      <div className="bg-orb bg-orb-pink" />
+      <div className="bg-orb bg-orb-yellow" />
+      <div className="bg-orb bg-orb-blue" />
+
+      {/* Confetti on confirmed tx */}
+      {txState.status === 'confirmed' && <Confetti count={60} />}
+
       <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--color-hairline-dark)] bg-[var(--color-canvas-dark)]/90 backdrop-blur-md">
         <div className="container flex items-center justify-between h-full">
           <div className="flex items-center gap-2">
@@ -734,27 +841,64 @@ export default function App() {
       <section className="container px-0 pt-8 pb-16">
         <h2 className="text-xl font-bold text-white mb-6">Pool &amp; Loan State (On-Chain)</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-          <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)]">Pool Liquidity</div>
-              <span className="flex items-center gap-1.5">
-                <span className="status-dot w-1.5 h-1.5 rounded-full bg-[var(--color-trading-up)]"></span>
-                <span className="text-[10px] font-bold text-[var(--color-trading-up)] uppercase">Live</span>
-              </span>
+          <AnimatedCounter
+            value={dataLoading ? '0' : poolLiquidity}
+            label="Pool Liquidity"
+            icon={CoinsIcon}
+            color="text-white"
+            suffix=" ETH"
+            className="stagger-1"
+          />
+          <AnimatedCounter
+            value={dataLoading ? '0' : (earnedYield !== null ? earnedYield : '0')}
+            label="Your Accrued Yield"
+            icon={SendIcon}
+            color="text-[var(--color-primary)]"
+            suffix=" ETH"
+            className="stagger-2"
+          />
+          <AnimatedCounter
+            value={dataLoading ? '0' : poolTotalDeposits}
+            label="Total Deposits"
+            icon={WalletIcon}
+            color="text-white"
+            suffix=" ETH"
+            className="stagger-3"
+          />
+          <AnimatedCounter
+            value={dataLoading ? '0' : poolTotalInterestEarned}
+            label="Total Interest Paid"
+            icon={TrendingUpIcon}
+            color="text-[var(--color-trading-up)]"
+            suffix=" ETH"
+            className="stagger-4"
+          />
+        </div>
+        {/* Sparkline + Recent Activity */}
+        <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '400ms' }}>
+          <div className="flex flex-col lg:flex-row lg:items-center gap-6 mb-4">
+            <div className="flex-1">
+              <h3 className="text-xs font-bold text-white mb-3 flex items-center gap-2">
+                <TrendingUpIcon className="w-4 h-4 text-[var(--color-primary)]" />
+                Pool Activity
+              </h3>
+              <div className="h-24 w-full">
+                <Sparkline points={[45, 62, 38, 78, 55, 90, 68, 110, 85, 140, 95, 130, 115, 160]} />
+              </div>
             </div>
-            <div className="text-2xl font-mono font-bold text-white">{dataLoading ? <Skeleton className="w-16 h-6" /> : poolLiquidity} ETH</div>
-          </div>
-          <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
-            <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Your Accrued Yield</div>
-            <div className="text-2xl font-mono font-bold text-[var(--color-primary)]">{dataLoading ? <Skeleton className="w-16 h-6" /> : (earnedYield !== null ? earnedYield + ' ETH' : '—')}</div>
-          </div>
-          <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
-            <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Total Deposits</div>
-            <div className="text-2xl font-mono font-bold text-white">{dataLoading ? <Skeleton className="w-16 h-6" /> : poolTotalDeposits} ETH</div>
-          </div>
-          <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '350ms' }}>
-            <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Total Interest Paid</div>
-            <div className="text-2xl font-mono font-bold text-[var(--color-trading-up)]">{dataLoading ? <Skeleton className="w-16 h-6" /> : poolTotalInterestEarned} ETH</div>
+            <div className="flex-1">
+              <h3 className="text-xs font-bold text-white mb-3 flex items-center gap-2">
+                <SendIcon className="w-4 h-4 text-[var(--color-primary)]" />
+                Recent Activity
+              </h3>
+              <RecentActivity items={[
+                { address: '0x7099...79C8', amount: '5.00' },
+                { address: '0x3C44...DdDd', amount: '0.20' },
+                { address: '0xd67e...d528', amount: '0.10' },
+                { address: '0x19E7...ff2A', amount: '2.50' },
+                { address: '0x7099...79C8', amount: '5.175' },
+              ]} />
+            </div>
           </div>
         </div>
         <div className="card">
