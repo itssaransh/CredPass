@@ -1115,17 +1115,17 @@ export default function App() {
         </div>
       </section>
 
-      <footer className="container px-0 pt-12 pb-8 border-t border-[var(--color-hairline-dark)] bg-[var(--color-surface-card-dark)]">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <footer className="w-full pt-12 pb-8 border-t border-[var(--color-hairline-dark)] bg-[var(--color-surface-card-dark)]">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
             <ShieldIcon className="w-5 h-5 fill-[var(--color-primary)]" aria-hidden="true" />
             <span className="text-sm font-bold text-[var(--color-primary)] tracking-tight">CredPass</span>
           </div>
           <nav className="flex flex-wrap justify-center gap-6 text-xs text-[var(--color-muted)]" aria-label="Footer navigation">
-            <a href="#" className="hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded px-1">Privacy</a>
-            <a href="#" className="hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded px-1">Terms</a>
-            <a href="#" className="hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded px-1">GitHub</a>
-            <a href="#" className="hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded px-1">Discord</a>
+            <a href="#" className="hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded px-1 py-1">Privacy</a>
+            <a href="#" className="hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded px-1 py-1">Terms</a>
+            <a href="#" className="hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded px-1 py-1">GitHub</a>
+            <a href="#" className="hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded px-1 py-1">Discord</a>
           </nav>
           <p className="text-[11px] text-[var(--color-muted)]">Privacy-first credit passport · EIP-712 credentials · Local Hardhat network</p>
         </div>
