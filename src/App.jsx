@@ -111,6 +111,8 @@ export default function App() {
   const [txState, setTxState] = useState({ status: 'idle', hash: null, message: null });
   const [loanState, setLoanState] = useState(null);
   const [poolLiquidity, setPoolLiquidity] = useState('0');
+  const [poolTotalDeposits, setPoolTotalDeposits] = useState('0');
+  const [poolTotalInterestEarned, setPoolTotalInterestEarned] = useState('0');
   const [contractError, setContractError] = useState(null);
   const [tierTerms, setTierTerms] = useState(null);
   const [faucetState, setFaucetState] = useState({ status: 'idle', message: null });
@@ -133,8 +135,14 @@ export default function App() {
       const provider = new BrowserProvider(window.ethereum);
       const contract = await getContract(provider);
       const liquidity = await contract.getLiquidity();
+      const [earned, totalDeposits, totalInterestEarned] = await Promise.all([
+        contract.earned(account),
+        contract.totalDeposits(),
+        contract.totalInterestEarned(),
+      ]);
       setPoolLiquidity(formatEther(liquidity));
-      const earned = await contract.earned(account);
+      setPoolTotalDeposits(formatEther(totalDeposits));
+      setPoolTotalInterestEarned(formatEther(totalInterestEarned));
       setEarnedYield(formatEther(earned));
       const loan = await contract.getLoan(account);
       setLoanState({
@@ -557,9 +565,12 @@ export default function App() {
                         </>
                       )}
                       {!credential && (
-                        <div className="flex flex-col items-center gap-3 py-4 opacity-50">
-                          <div className="w-8 h-8 rounded-full bg-[var(--color-surface-elevated-dark)]"></div>
-                          <div className="text-[10px] text-[var(--color-muted)]">No credential yet</div>
+                        <div className="flex flex-col items-center gap-4 py-6 opacity-100">
+                          <div className="w-12 h-12 rounded-full bg-[var(--color-surface-elevated-dark)] flex items-center justify-center">
+                            <ShieldIcon className="w-6 h-6 text-[var(--color-muted-strong)]" />
+                          </div>
+                          <div className="text-xs font-bold text-[var(--color-muted-strong)]">No credential yet</div>
+                          <div className="text-[11px] text-[var(--color-muted)] text-center">Issue a credit credential to start borrowing</div>
                         </div>
                       )}
                     </div>
@@ -714,7 +725,7 @@ export default function App() {
       {/* Pool & Loan State */}
       <section className="container px-0 pt-8 pb-16">
         <h2 className="text-xl font-bold text-white mb-6">Pool &amp; Loan State (On-Chain)</h2>
-        <div className="grid sm:grid-cols-3 gap-5 mb-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
             <div className="flex items-center justify-between mb-2">
               <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)]">Pool Liquidity</div>
@@ -730,8 +741,12 @@ export default function App() {
             <div className="text-2xl font-mono font-bold text-[var(--color-primary)]">{earnedYield !== null ? earnedYield + ' ETH' : '—'}</div>
           </div>
           <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
-            <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Total Deposited</div>
-            <div className="text-2xl font-mono font-bold text-white">{loanState?.principal ? loanState.principal : '0'} ETH</div>
+            <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Total Deposits</div>
+            <div className="text-2xl font-mono font-bold text-white">{poolTotalDeposits} ETH</div>
+          </div>
+          <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '350ms' }}>
+            <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Total Interest Paid</div>
+            <div className="text-2xl font-mono font-bold text-[var(--color-trading-up)]">{poolTotalInterestEarned} ETH</div>
           </div>
         </div>
         <div className="card">
