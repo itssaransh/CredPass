@@ -104,6 +104,10 @@ const SendIcon = ({ className = 'w-5 h-5' }) => (
   </svg>
 );
 
+const Skeleton = ({ className = '' }) => (
+  <div className={`animate-pulse bg-[var(--color-surface-elevated-dark)] rounded ${className}`} />
+);
+
 export default function App() {
   const [credential, setCredential] = useState(null);
   const [backendError, setBackendError] = useState(null);
@@ -122,6 +126,7 @@ export default function App() {
   const [depositBusy, setDepositBusy] = useState(false);
   const [toastTimer, setToastTimer] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [dataLoading, setDataLoading] = useState(false);
 
   const { account, error: walletError, connectWallet, disconnectWallet, switchToLocalNetwork, shortenedAddress, hasMetaMask, isLocalNetwork } = useWallet();
 
@@ -132,6 +137,7 @@ export default function App() {
   const refreshOnChainData = useCallback(async () => {
     if (!window.ethereum || !account) return;
     try {
+      setDataLoading(true);
       const provider = new BrowserProvider(window.ethereum);
       const contract = await getContract(provider);
       const liquidity = await contract.getLiquidity();
@@ -161,6 +167,8 @@ export default function App() {
         setContractError('Failed to read contract: ' + raw);
       }
       console.error('refreshOnChainData error', e);
+    } finally {
+      setDataLoading(false);
     }
   }, [account, getContract]);
 
@@ -734,19 +742,19 @@ export default function App() {
                 <span className="text-[10px] font-bold text-[var(--color-trading-up)] uppercase">Live</span>
               </span>
             </div>
-            <div className="text-2xl font-mono font-bold text-white">{poolLiquidity} ETH</div>
+            <div className="text-2xl font-mono font-bold text-white">{dataLoading ? <Skeleton className="w-16 h-6" /> : poolLiquidity} ETH</div>
           </div>
           <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
             <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Your Accrued Yield</div>
-            <div className="text-2xl font-mono font-bold text-[var(--color-primary)]">{earnedYield !== null ? earnedYield + ' ETH' : '—'}</div>
+            <div className="text-2xl font-mono font-bold text-[var(--color-primary)]">{dataLoading ? <Skeleton className="w-16 h-6" /> : (earnedYield !== null ? earnedYield + ' ETH' : '—')}</div>
           </div>
           <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
             <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Total Deposits</div>
-            <div className="text-2xl font-mono font-bold text-white">{poolTotalDeposits} ETH</div>
+            <div className="text-2xl font-mono font-bold text-white">{dataLoading ? <Skeleton className="w-16 h-6" /> : poolTotalDeposits} ETH</div>
           </div>
           <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '350ms' }}>
             <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-2">Total Interest Paid</div>
-            <div className="text-2xl font-mono font-bold text-[var(--color-trading-up)]">{poolTotalInterestEarned} ETH</div>
+            <div className="text-2xl font-mono font-bold text-[var(--color-trading-up)]">{dataLoading ? <Skeleton className="w-16 h-6" /> : poolTotalInterestEarned} ETH</div>
           </div>
         </div>
         <div className="card">
