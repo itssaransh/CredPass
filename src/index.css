@@ -114,6 +114,19 @@ body {
   border-color: var(--color-primary);
 }
 
+/* Text glow effects */
+.text-glow {
+  text-shadow: 0 0 20px rgba(252, 213, 53, 0.3);
+}
+
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #fcd535 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .input-focus:focus-within {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 1px var(--color-primary);

@@ -499,7 +499,7 @@ export default function App() {
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div className="text-center md:text-left space-y-5 animate-fade-in" style={{ animationDelay: '100ms' }}>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
-                  Prove Credit. <span className="text-[var(--color-primary)]">Keep Control.</span>
+                  Prove Credit. <span className="text-gradient">Keep Control.</span>
                 </h1>
                 <p className="text-lg text-[var(--color-muted-strong)] max-w-lg md:max-w-none mx-auto md:mx-0 leading-relaxed">
                   CredPass is a privacy-first, wallet-linked credit passport powered by EIP-712 signed credentials.
