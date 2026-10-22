@@ -458,12 +458,12 @@ export default function App() {
                 <button onClick={disconnectWallet} className="text-xs font-medium text-[var(--color-muted-strong)] hover:text-[var(--color-primary)] transition-colors">Disconnect</button>
               </>
             ) : (
-              <button onClick={connectWallet} disabled={!hasMetaMask} className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[var(--color-surface-card-dark)] text-[var(--color-body-dark)] border border-[var(--color-hairline-dark)] hover:bg-[var(--color-surface-elevated-dark)] transition-colors disabled:opacity-40">
+              <button onClick={connectWallet} disabled={!hasMetaMask} className="btn-primary text-sm px-4 py-2" aria-label="Connect MetaMask wallet">
                 {hasMetaMask ? 'Connect Wallet' : 'No Wallet'}
               </button>
             )}
             {!account && (
-              <a href="#features" className="btn-primary text-xs px-4 py-2">Get Started</a>
+              <a href="#features" className="btn-secondary text-xs px-4 py-2">Get Started</a>
             )}
           </div>
         </div>
@@ -496,7 +496,7 @@ export default function App() {
               )}
               {!account && (
                 <button onClick={connectWallet} disabled={!hasMetaMask} className="w-full text-left px-6 py-3 text-sm font-bold text-[var(--color-ink)] rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-active)] disabled:opacity-40 transition-colors">
-                  {hasMetaMask ? 'Connect Wallet' : 'No Wallet'}
+                  {hasMetaMask ? 'Connect Wallet' : 'Install MetaMask'}
                 </button>
               )}
             </nav>
@@ -540,9 +540,12 @@ export default function App() {
               )}
             </div>
             {!account && (
-              <p className="text-sm text-[var(--color-muted-strong)]">
-                Connect your MetaMask wallet to issue a credential.
-              </p>
+              <div className="mt-4 animate-fade-in">
+                <p className="text-sm text-[var(--color-muted-strong)] mb-3">Connect your MetaMask wallet to issue a credential.</p>
+                <button onClick={connectWallet} disabled={!hasMetaMask} className="btn-primary text-base w-full sm:w-auto">
+                  {hasMetaMask ? 'Connect Wallet' : 'Install MetaMask'}
+                </button>
+              </div>
             )}
             {walletError && (
               <p className="mt-2 text-sm text-[var(--color-trading-down)]">{walletError}</p>
@@ -550,7 +553,7 @@ export default function App() {
             {!isLocalNetwork && account && (
               <div className="mt-4 animate-fade-in">
                 <p className="text-sm text-[var(--color-trading-down)] mb-2">Connect MetaMask to local Hardhat network (0x7a69) to interact with the contract.</p>
-                <button onClick={switchToLocalNetwork} className="btn-ghost text-sm">
+                <button onClick={switchToLocalNetwork} className="btn-primary text-sm">
                   Switch to Hardhat Network
                 </button>
               </div>

@@ -97,6 +97,7 @@ body {
   color: var(--color-body-dark);
   -webkit-font-smoothing: antialiased;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Utility animations */
