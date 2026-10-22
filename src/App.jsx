@@ -1121,6 +1121,12 @@ export default function App() {
             <ShieldIcon className="w-5 h-5 fill-[var(--color-primary)]" aria-hidden="true" />
             <span className="text-sm font-bold text-[var(--color-primary)] tracking-tight">CredPass</span>
           </div>
+          <nav className="flex flex-wrap justify-center gap-6 text-xs text-[var(--color-muted)]" aria-label="Footer navigation">
+            <a href="#" className="hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded px-1">Privacy</a>
+            <a href="#" className="hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded px-1">Terms</a>
+            <a href="#" className="hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded px-1">GitHub</a>
+            <a href="#" className="hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded px-1">Discord</a>
+          </nav>
           <p className="text-[11px] text-[var(--color-muted)]">Privacy-first credit passport · EIP-712 credentials · Local Hardhat network</p>
         </div>
       </footer>
