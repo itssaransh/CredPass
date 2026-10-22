@@ -97,23 +97,13 @@
   100% { stroke-dashoffset: 0; }
 }
 
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-@keyframes confetti-fall {
-  0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(600px) rotate(720deg); opacity: 0; }
-}
-
 body {
   margin: 0;
   font-family: var(--font-sans);
   background-color: var(--color-canvas-dark);
   color: var(--color-body-dark);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Utility animations */
@@ -129,7 +119,6 @@ body {
 .animate-count-up { animation: count-up 0.6s ease-out both; }
 .animate-shimmer { animation: shimmer 2s linear infinite; }
 .animate-sparkline { animation: sparkline-dash 2s ease-out forwards; }
-.animate-marquee { animation: marquee 30s linear infinite; }
 
 .delay-50 { animation-delay: 50ms; }
 .delay-100 { animation-delay: 100ms; }
@@ -145,31 +134,31 @@ body {
 .delay-900 { animation-delay: 900ms; }
 .delay-1000 { animation-delay: 1000ms; }
 
-/* Decorative background orbs */
+/* Decorative background orbs - subtle, Vercel-style */
 .bg-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.15;
+  filter: blur(120px);
+  opacity: 0.06;
   z-index: -1;
 }
 .bg-orb-pink {
   background: radial-gradient(circle, #f6465d 0%, transparent 70%);
-  width: 400px; height: 400px;
-  top: -100px; left: -100px;
-  animation: float-slow 8s ease-in-out infinite;
+  width: 500px; height: 500px;
+  top: -200px; left: -200px;
+  animation: float-slow 10s ease-in-out infinite;
 }
 .bg-orb-yellow {
   background: radial-gradient(circle, #fcd535 0%, transparent 70%);
-  width: 350px; height: 350px;
-  bottom: -150px; right: -150px;
-  animation: float-slow-delayed 10s ease-in-out infinite;
+  width: 450px; height: 450px;
+  bottom: -200px; right: -200px;
+  animation: float-slow-delayed 12s ease-in-out infinite;
 }
 .bg-orb-blue {
   background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
-  width: 300px; height: 300px;
-  top: 20%; right: 10%;
-  animation: float-slow-delayed 12s ease-in-out infinite;
+  width: 400px; height: 400px;
+  top: 15%; right: 10%;
+  animation: float-slow-delayed 14s ease-in-out infinite;
 }
 
 /* Shimmer loader skeleton */

@@ -156,53 +156,20 @@ const Sparkline = ({ points, color = 'var(--color-primary)' }) => {
 
 const RecentActivity = ({ items }) => {
   return (
-    <div className="relative overflow-hidden h-10">
-      <div className="animate-marquee flex items-center gap-6 whitespace-nowrap">
+    <div className="flex flex-col gap-2">
+      <h3 className="text-xs font-bold text-white mb-3 flex items-center gap-2">
+        <SendIcon className="w-4 h-4 text-[var(--color-primary)]" />
+        Recent Activity
+      </h3>
+      <div className="space-y-2">
         {items.map((item, i) => (
-          <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--color-surface-elevated-dark)] border border-[var(--color-hairline-dark)]">
+          <div key={i} className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-[var(--color-surface-elevated-dark)] border border-[var(--color-hairline-dark)] animate-fade-in" style={{ animationDelay: `${i * 100}ms` }}>
             <div className="w-2 h-2 rounded-full bg-[var(--color-trading-up)] animate-pulse-slow" />
-            <span className="text-xs text-[var(--color-body-dark)]">{item.address}</span>
+            <span className="text-xs text-[var(--color-body-dark)] truncate">{item.address}</span>
             <span className="text-xs text-[var(--color-trading-up)]">+{item.amount} ETH</span>
           </div>
         ))}
       </div>
-      <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-canvas-dark)] to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-l from-[var(--color-canvas-dark)] to-transparent" />
-    </div>
-  );
-};
-
-const Confetti = ({ count = 50 }) => {
-  const [particles, setParticles] = useState([]);
-  useEffect(() => {
-    const newParticles = Array.from({ length: count }, () => ({
-      x: Math.random() * 100,
-      y: Math.random() * -50,
-      vx: (Math.random() - 0.5) * 20,
-      vy: Math.random() * 10 + 5,
-      color: ['#fcd535', '#f6465d', '#0ecb81', '#3b82f6'][Math.floor(Math.random() * 4)],
-      size: Math.random() * 6 + 4,
-      life: 1,
-    }));
-    setParticles(newParticles);
-  }, [count]);
-  return (
-    <div className="fixed inset-0 pointer-events-none z-[100]">
-      {particles.map((p, i) => (
-        <div
-          key={i}
-          className="confetti"
-          style={{
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            backgroundColor: p.color,
-            width: `${p.size}px`,
-            height: `${p.size}px`,
-            animation: `confetti-fall 2s ease-out forwards`,
-            animationDelay: `${i * 0.03}s`,
-          }}
-        />
-      ))}
     </div>
   );
 };
@@ -463,14 +430,14 @@ export default function App() {
   const busy = txState.status === 'pending' || txState.status === 'submitting';
 
   return (
-    <main className="min-h-screen bg-[var(--color-canvas-dark)] text-[var(--color-body-dark)] selection:bg-[var(--color-primary)] selection:text-[var(--color-ink)] overflow-x-hidden relative">
+    <main className="min-h-screen bg-[var(--color-canvas-dark)] text-[var(--color-body-dark)] selection:bg-[var(--color-primary)] selection:text-[var(--color-ink)] relative">
       {/* Decorative background orbs */}
       <div className="bg-orb bg-orb-pink" />
       <div className="bg-orb bg-orb-yellow" />
       <div className="bg-orb bg-orb-blue" />
 
       {/* Confetti on confirmed tx */}
-      {txState.status === 'confirmed' && <Confetti count={60} />}
+      {txState.status === 'confirmed' && <div className="fixed inset-0 pointer-events-none z-[100]" />}
 
       <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--color-hairline-dark)] bg-[var(--color-canvas-dark)]/90 backdrop-blur-md">
         <div className="container flex items-center justify-between h-full">
