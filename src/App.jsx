@@ -415,7 +415,7 @@ export default function App() {
   const busy = txState.status === 'pending' || txState.status === 'submitting';
 
   return (
-    <main className="min-h-screen bg-[var(--color-canvas-dark)] text-[var(--color-body-dark)] selection:bg-[var(--color-primary)] selection:text-[var(--color-ink)] relative">
+    <main className="min-h-screen bg-[var(--color-canvas-dark)] text-[var(--color-body-dark)] selection:bg-[var(--color-primary)] selection:text-[var(--color-ink)] relative flex flex-col">
       {/* Decorative background orbs — subtle */}
       <div className="bg-orb bg-orb-pink" />
       <div className="bg-orb bg-orb-yellow" />
@@ -504,7 +504,7 @@ export default function App() {
         </div>
       )}
 
-      <div className="pt-16 pb-8">
+      <div className="flex-1 pt-16 pb-8">
         {faucetState.status !== 'idle' && faucetState.message && (
           <div className={`container px-0 py-3 rounded-xl border text-xs font-medium ${
             faucetState.status === 'failed'
