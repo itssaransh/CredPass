@@ -65,6 +65,11 @@
   to { transform: rotate(360deg); }
 }
 
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
 body {
   margin: 0;
   font-family: var(--font-sans);
@@ -81,6 +86,7 @@ body {
 .animate-pulse-slow { animation: var(--animate-pulse-slow); }
 .animate-bounce { animation: var(--animate-bounce); }
 .animate-spin { animation: spin 1s linear infinite; }
+.animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
 
 .delay-50 { animation-delay: 50ms; }
 .delay-100 { animation-delay: 100ms; }

@@ -490,7 +490,7 @@ export default function App() {
 
         {/* Hero */}
         <section id="features" className="relative overflow-hidden pt-6">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[var(--color-primary)]/10 rounded-full blur-[100px] pointer-events-none"></div>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[var(--color-primary)]/10 rounded-full blur-[100px] pointer-events-none animate-float-slow"></div>
           <div className="container">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-semibold mb-6 animate-fade-in">
               <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-bounce"></span>
