@@ -90,8 +90,20 @@
   100% { stroke-dashoffset: 0; }
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 body {
   margin: 0;
+  padding: 0;
+  min-height: 100%;
   font-family: var(--font-sans);
   background-color: var(--color-canvas-dark);
   color: var(--color-body-dark);
