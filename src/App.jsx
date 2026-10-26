@@ -48,6 +48,19 @@ function friendlyTxError(e) {
   return `${short}`;
 }
 
+const BrandMark = ({ className = 'w-7 h-7', id = 'cp-brand-mark' } = {}) => (
+  <svg className={className} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#ffe066" />
+        <stop offset="0.55" stopColor="#fcd535" />
+        <stop offset="1" stopColor="#f0b90b" />
+      </linearGradient>
+    </defs>
+    <path d="M32 7.2 53.5 15.4v15.4c0 13-9.3 23.6-21.5 27.6C19.8 54.4 10.5 43.8 10.5 30.8V15.4L32 7.2Z" fill={`url(#${id})`} />
+    <path d="m22 32.3 6.6 6.6L42.6 23.4" fill="none" stroke="#0b0e11" strokeWidth="5.4" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 const ShieldIcon = ({ className = 'w-5 h-5', 'aria-hidden': ariaHidden = 'true' } = {}) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden={ariaHidden}>
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -425,7 +438,7 @@ export default function App() {
       <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--color-hairline-dark)] bg-[var(--color-canvas-dark)]/80 backdrop-blur-md">
         <div className="container flex items-center justify-between h-full">
           <div className="flex items-center gap-2">
-            <ShieldIcon className="w-7 h-7 fill-[var(--color-primary)]" />
+            <BrandMark className="w-7 h-7" id="cp-brand-mark-nav" />
             <span className="text-lg font-bold text-[var(--color-primary)] tracking-tight">CredPass</span>
           </div>
           <div className="flex items-center gap-6 text-sm font-medium hidden md:flex">
@@ -1123,7 +1136,7 @@ export default function App() {
         <div className="container">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex items-center gap-2">
-              <ShieldIcon className="w-5 h-5 fill-[var(--color-primary)]" aria-hidden="true" />
+              <BrandMark className="w-5 h-5" id="cp-brand-mark-footer" />
               <span className="text-sm font-bold text-[var(--color-primary)] tracking-tight">CredPass</span>
             </div>
             <nav className="flex flex-wrap justify-center gap-6 text-xs text-[var(--color-muted)]" aria-label="Footer navigation">

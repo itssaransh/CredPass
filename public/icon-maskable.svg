@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="CredPass">
+  <defs>
+    <linearGradient id="cp-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe066"/>
+      <stop offset="0.55" stop-color="#fcd535"/>
+      <stop offset="1" stop-color="#f0b90b"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="#0b0e11"/>
+  <g transform="translate(19.2 19.2) scale(7.4)">
+    <path d="M32 7.2 53.5 15.4v15.4c0 13-9.3 23.6-21.5 27.6C19.8 54.4 10.5 43.8 10.5 30.8V15.4L32 7.2Z" fill="url(#cp-gold)"/>
+    <path d="m22 32.3 6.6 6.6L42.6 23.4" fill="none" stroke="#0b0e11" stroke-width="5.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

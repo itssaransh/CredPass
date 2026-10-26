@@ -60,6 +60,31 @@ deployed `CredPassLendingPool` plus MetaMask on the network configured in
 > local Hardhat deployment. Do not use that fallback for a public chain — set a
 > real secret first (and deploy the contract with the matching evaluator).
 
+## Brand assets
+
+The CredPass mark is a gold shield with a dark check. Assets live in `public/`:
+
+| Asset | Use |
+|---|---|
+| `favicon.svg` | Primary favicon (SVG, modern browsers) |
+| `favicon.ico`, `favicon-16.png`, `favicon-32.png` | Legacy favicon fallbacks |
+| `apple-touch-icon.png` | iOS home-screen icon |
+| `icon-192.png`, `icon-512.png`, `icon-512-maskable.png` | PWA / Android icons |
+| `og-image.png` | 1200×630 Open Graph / Twitter card |
+| `site.webmanifest` | Installable web-app metadata |
+| `logo.svg` | Horizontal lockup for docs / press |
+
+PNG, ICO and social-card assets are generated from `favicon.svg` and
+`icon-maskable.svg`:
+
+```bash
+npm run brand:assets:install   # once per machine (downloads Chromium)
+npm run brand:assets           # regenerate PNG/ICO/OG assets
+```
+
+The canonical and Open Graph URLs in `index.html` point at the live deployment;
+update them if the domain changes.
+
 **Trust model (important):**
 
 - The tier is computed **only** by `backend/services/evaluation.js` from DB records. The client never sends a tier.

@@ -14,6 +14,8 @@
     "test:e2e": "cd contracts && npx hardhat run scripts/e2e-local.cjs --network localhost",
     "test:backend": "cd backend && node test/issue.test.js && node test/evaluation.test.js && node test/manipulation.test.js && node test/integration.test.js && node test/faucet.test.js",
     "build": "vite build",
+    "brand:assets": "node scripts/generate-brand-assets.mjs",
+    "brand:assets:install": "playwright install chromium",
     "deploy": "npm run build && wrangler deploy",
     "deploy:db": "wrangler d1 execute credpass-db --remote --file=backend/db/d1-schema.sql",
     "deploy:seed": "wrangler d1 execute credpass-db --remote --file=backend/db/d1-seed.sql",
