@@ -108,8 +108,6 @@ body {
   background-color: var(--color-canvas-dark);
   color: var(--color-body-dark);
   -webkit-font-smoothing: antialiased;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 /* Utility animations */
@@ -147,6 +145,7 @@ body {
   filter: blur(120px);
   opacity: 0.06;
   z-index: -1;
+  pointer-events: none;
 }
 .bg-orb-pink {
   background: radial-gradient(circle, #f6465d 0%, transparent 70%);
@@ -209,7 +208,7 @@ body {
 @layer components {
   .container {
     width: 100%;
-    max-width: 72rem;
+    max-width: 80rem;
     margin-left: auto;
     margin-right: auto;
     padding-left: 1.5rem;

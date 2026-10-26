@@ -13,6 +13,52 @@ Contract reference: [`contracts/DEPLOY_REF.md`](./contracts/DEPLOY_REF.md).
 | Backend API | Express (ESM) | `backend/server.js` | 4000 |
 | Contracts | Hardhat 2.28, Solidity 0.8.28, `CredPassLendingPool` | `contracts/` | 8545 node, chainId **31337 (0x7a69)** |
 | Database | Postgres (docker, `docker-compose.yml` — Redis/Mongo were cut, item 13) | `backend/db/init.sql` | 5432 |
+| Cloud deployment | Cloudflare Worker + D1 + Static Assets | `backend/worker/`, `wrangler.toml` | https |
+
+## Deploy (Cloudflare Workers)
+
+**Live:** <https://credpass.credpass-app.workers.dev>
+
+A single Worker serves the built React app **and** the API. The API is available
+at both `/api/*` (what the frontend calls) and the unprefixed paths (`/health`,
+`/credentials/issue`, …). The cloud database is **Cloudflare D1**; local
+development still uses Postgres — they are independent databases.
+
+```bash
+npm run deploy        # build the frontend + deploy the Worker (use this after code changes)
+npm run deploy:db     # create/update the D1 schema (safe to re-run)
+npm run deploy:seed   # idempotent demo repayment data
+npm run deploy:full   # deploy:db + deploy:seed + deploy
+npm run deploy:dev    # build + `wrangler dev` for a local Worker preview
+```
+
+First-time setup (already done for the live deployment):
+
+```bash
+npx wrangler login
+npx wrangler d1 create credpass-db   # copy database_id into wrangler.toml
+npm run deploy:db && npm run deploy:seed && npm run deploy
+```
+
+Optional secrets / configuration:
+
+```bash
+npx wrangler secret put EVALUATOR_PRIVATE_KEY   # must match the deployed evaluator
+npx wrangler secret put RPC_URL                 # public HTTPS RPC (Alchemy/Infura/...)
+# POOL_ADDRESS can go in [vars] in wrangler.toml
+```
+
+Without `RPC_URL`/`POOL_ADDRESS` the deployment is fully functional for credit
+evaluation and EIP-712 credential issuance, but chain-dependent features
+degrade by design: the faucet stays 403 (local-only) and
+`/repayments/record` returns 503. On-chain borrow/repay/deposit still require a
+deployed `CredPassLendingPool` plus MetaMask on the network configured in
+`src/useWallet.js` (local Hardhat, chainId 31337).
+
+> ⚠️ **Key hygiene:** if `EVALUATOR_PRIVATE_KEY` is not set, the Worker falls
+> back to the repo's deterministic *local dev* key so signatures match the
+> local Hardhat deployment. Do not use that fallback for a public chain — set a
+> real secret first (and deploy the contract with the matching evaluator).
 
 **Trust model (important):**
 

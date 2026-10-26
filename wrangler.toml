@@ -1,0 +1,35 @@
+# Cloudflare Workers deployment for CredPass.
+#
+# One Worker serves both the built React app (dist/) and the API
+# (/api/*, plus the same routes without the prefix).
+#
+# Deploy with: npm run deploy
+name = "credpass"
+main = "backend/worker/index.js"
+compatibility_date = "2026-08-04"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+# Route every request through the Worker so /api/* can be handled here and
+# everything else is delegated to the static asset binding.
+run_worker_first = true
+# Client-side routes (e.g. /#features) fall back to index.html.
+not_found_handling = "single-page-application"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "credpass-db"
+database_id = "72dd34e0-380a-4139-8a7c-772e32dc3313"
+
+[observability]
+enabled = true
+
+[vars]
+ETH_USD_PRICE = "2750"
+# Optional on-chain integration. With these unset, credential issuance uses the
+# DB-derived tier terms, the faucet stays disabled (by design), and
+# /repayments/record returns 503.
+# RPC_URL = "https://..."
+# POOL_ADDRESS = "0x..."

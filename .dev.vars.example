@@ -1,0 +1,19 @@
+# Optional Cloudflare Worker secrets for local `wrangler dev`.
+# Copy to `.dev.vars` (gitignored) and fill in real values.
+#
+# For production, set these with:
+#   npx wrangler secret put EVALUATOR_PRIVATE_KEY
+#   npx wrangler secret put RPC_URL
+#
+# EVALUATOR_PRIVATE_KEY must derive the evaluator address the lending pool
+# contract was deployed with. Omit it to use the deterministic local dev key
+# (0x19E7E376E7C213B7E7e7e46cc70A5dD086DAff2A).
+# EVALUATOR_PRIVATE_KEY=0x...
+
+# Public HTTPS JSON-RPC endpoint for a deployed chain (Alchemy/Infura/etc.).
+# When unset: credential issuance uses DB-derived tier terms, the faucet stays
+# disabled, and /repayments/record returns 503.
+# RPC_URL=https://...
+
+# Address of the deployed CredPassLendingPool contract on that chain.
+# POOL_ADDRESS=0x...

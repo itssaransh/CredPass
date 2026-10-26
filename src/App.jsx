@@ -415,11 +415,11 @@ export default function App() {
   const busy = txState.status === 'pending' || txState.status === 'submitting';
 
   return (
-    <main className="min-h-screen bg-[var(--color-canvas-dark)] text-[var(--color-body-dark)] selection:bg-[var(--color-primary)] selection:text-[var(--color-ink)] relative flex flex-col">
+    <main className="min-h-screen bg-[var(--color-canvas-dark)] text-[var(--color-body-dark)] selection:bg-[var(--color-primary)] selection:text-[var(--color-ink)] relative flex flex-col overflow-hidden">
       {/* Decorative background orbs — subtle */}
-      <div className="bg-orb bg-orb-pink" />
-      <div className="bg-orb bg-orb-yellow" />
-      <div className="bg-orb bg-orb-blue" />
+      <div className="bg-orb bg-orb-pink" aria-hidden="true" />
+      <div className="bg-orb bg-orb-yellow" aria-hidden="true" />
+      <div className="bg-orb bg-orb-blue" aria-hidden="true" />
 
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--color-hairline-dark)] bg-[var(--color-canvas-dark)]/80 backdrop-blur-md">
@@ -504,9 +504,11 @@ export default function App() {
         </div>
       )}
 
-      <div className="flex-1 pt-16 pb-8">
+      {/* Main content area - wraps all sections to push footer to bottom */}
+      <div className="flex-1 min-h-0 overflow-y-auto pt-16 pb-8">
+        <>
         {faucetState.status !== 'idle' && faucetState.message && (
-          <div className={`container px-0 py-3 rounded-xl border text-xs font-medium ${
+          <div className={`container py-3 rounded-xl border text-xs font-medium ${
             faucetState.status === 'failed'
               ? 'bg-[var(--color-trading-down)]/10 border-[var(--color-trading-down)] text-[var(--color-trading-down)]'
               : 'bg-[var(--color-trading-up)]/10 border-[var(--color-trading-up)] text-[var(--color-trading-up)]'
@@ -516,7 +518,7 @@ export default function App() {
         )}
 
         {/* Hero — always visible */}
-        <section className="container px-0 pt-12 text-center animate-fade-in">
+        <section className="container pt-12 text-center animate-fade-in">
           <div className="max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-semibold mb-6">
               <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-bounce" aria-hidden="true" />
@@ -565,7 +567,7 @@ export default function App() {
         </section>
 
         {/* Features grid */}
-        <section className="mt-16 px-0 pt-12 border-t border-[var(--color-hairline-dark)]">
+        <section className="mt-16 pt-12 border-t border-[var(--color-hairline-dark)]">
           <div className="container">
             <div className="grid sm:grid-cols-3 gap-5">
               <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
@@ -592,10 +594,9 @@ export default function App() {
             </div>
           </div>
         </section>
-      </div>
 
       {/* Pool & Loan State — always visible */}
-      <section className="container px-0 pt-8 pb-16">
+      <section className="container pt-8 pb-12">
         <h2 className="text-xl font-bold text-white mb-6">Pool & Loan State (On-Chain)</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           <AnimatedCounter
@@ -685,7 +686,7 @@ export default function App() {
 
       {/* Sparkline + Recent Activity */}
       {account && (
-        <section className="container px-0 pt-8 pb-16">
+        <section className="container pt-8 pb-12">
           <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '400ms' }}>
             <div className="flex flex-col lg:flex-row lg:items-center gap-6 mb-4">
               <div className="flex-1">
@@ -717,7 +718,7 @@ export default function App() {
 
       {/* Deposit & Claim — account only */}
       {account && (
-        <section className="container px-0 pt-8 pb-16">
+        <section className="container pt-8 pb-12">
           <div className="card">
             <div className="grid sm:grid-cols-2 gap-5">
               <div className="card">
@@ -771,7 +772,7 @@ export default function App() {
 
       {/* Logged-in features */}
       {account && (
-        <section className="container px-0 pt-12 pb-16 border-t border-[var(--color-hairline-dark)]">
+        <section className="container pt-12 pb-12 border-t border-[var(--color-hairline-dark)]">
           <div className="container">
             {/* Features grid */}
             <div className="grid sm:grid-cols-3 gap-5 mb-16">
@@ -1007,7 +1008,7 @@ export default function App() {
 
       {/* Credential Card (logged in + credential issued) */}
       {account && credential && (
-        <section className="container px-0 pt-8 pb-16">
+        <section className="container pt-8 pb-12">
           <div className="card max-w-3xl mx-auto">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
@@ -1052,7 +1053,7 @@ export default function App() {
 
       {/* Credential Progress */}
       {account && credential?.progress?.nextTier && (
-        <section className="container px-0 pt-8 pb-16">
+        <section className="container pt-8 pb-12">
           <div className="card max-w-3xl mx-auto">
             <h3 className="text-[var(--color-primary)] font-bold text-sm mb-4">Progress toward Tier {credential.progress.nextTier}</h3>
             <ul className="space-y-3">
@@ -1105,7 +1106,7 @@ export default function App() {
       )}
 
       {/* How It Works */}
-      <section id="how-it-works" className="container px-0 pt-16 pb-20 border-t border-[var(--color-hairline-dark)]">
+      <section id="how-it-works" className="container pt-16 pb-16 border-t border-[var(--color-hairline-dark)]">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-xl font-bold text-white">How CredPass Works</h2>
@@ -1115,8 +1116,11 @@ export default function App() {
         </div>
       </section>
 
-      <footer className="w-full pt-12 pb-10 border-t border-[var(--color-hairline-dark)] bg-[var(--color-surface-card-dark)]">
-        <div className="container mx-auto px-4">
+        </>
+      </div> {/* End flex-1 content wrapper */}
+
+      <footer className="w-full pt-10 pb-8 border-t border-[var(--color-hairline-dark)] bg-[var(--color-surface-card-dark)]">
+        <div className="container">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex items-center gap-2">
               <ShieldIcon className="w-5 h-5 fill-[var(--color-primary)]" aria-hidden="true" />
