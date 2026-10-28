@@ -534,7 +534,7 @@ export default function App() {
         )}
 
         {/* Hero — always visible */}
-        <section className="container pt-20 text-center animate-fade-in">
+        <section className="container pt-12 text-center animate-fade-in">
           <div className="max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-semibold mb-6">
               <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-bounce" aria-hidden="true" />

@@ -98,8 +98,6 @@ html {
   margin: 0;
   padding: 0;
   height: 100%;
-  scroll-padding-top: 5rem;
-  scroll-behavior: smooth;
 }
 
 body {
