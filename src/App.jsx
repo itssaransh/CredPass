@@ -608,6 +608,51 @@ export default function App() {
           </div>
         </section>
 
+        {/* Credit Credential Issued — moved up near Get Credit Credential */}
+        {account && credential && (
+          <section className="container pt-6 pb-8">
+            <div className="card max-w-3xl mx-auto">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)] text-[var(--color-ink)] flex items-center justify-center font-bold text-xl">
+                    {credential.credential?.tier}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Credit Credential Issued</h3>
+                    <p className="text-xs text-[var(--color-muted-strong)]">EIP-712 signed · Tier {credential.credential?.tier}</p>
+                  </div>
+                </div>
+                <ClockIcon className="w-5 h-5 text-[var(--color-muted-strong)]" aria-hidden="true" />
+              </div>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between pb-2 border-b border-[var(--color-hairline-dark)]">
+                  <span className="text-[var(--color-muted)]">Tier</span>
+                  <span className="font-mono font-bold text-[var(--color-primary)]">{credential.credential?.tier || 'Unknown'}</span>
+                </div>
+                <div className="flex justify-between pb-2 border-b border-[var(--color-hairline-dark)]">
+                  <span className="text-[var(--color-muted)]">Wallet</span>
+                  <span className="font-mono text-[11px] text-[var(--color-body-dark)] truncate">{credential.credential?.userAddress}</span>
+                </div>
+                <div className="flex justify-between pb-2 border-b border-[var(--color-hairline-dark)]">
+                  <span className="text-[var(--color-muted)]">Tier Hash</span>
+                  <span className="font-mono text-[11px] text-[var(--color-muted)] truncate">{credential.tierHash}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[var(--color-muted)]">Evaluation</span>
+                  <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{credential.evaluation?.tier || '—'} tier · ${credential.evaluation?.totalPaidUSD || 0}</span>
+                </div>
+                {typeof credential.credential?.issuedAt === 'number' && (
+                  <div className="flex justify-between">
+                    <span className="text-[var(--color-muted)]">Issued</span>
+                    <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{new Date(credential.credential.issuedAt * 1000).toLocaleTimeString()}</span>
+                  </div>
+                )}
+              </div>
+              <p className="mt-4 text-[11px] text-[var(--color-muted-strong)]">Signature and tier are authoritative from backend. Client does not control tier.</p>
+            </div>
+          </section>
+        )}
+
       {/* Pool & Loan State — always visible */}
       <section className="container pt-8 pb-12">
         <h2 className="text-xl font-bold text-white mb-6">Pool & Loan State (On-Chain)</h2>
@@ -1015,51 +1060,6 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* Credential Card (logged in + credential issued) */}
-      {account && credential && (
-        <section className="container pt-8 pb-12">
-          <div className="card max-w-3xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)] text-[var(--color-ink)] flex items-center justify-center font-bold text-xl">
-                  {credential.credential?.tier}
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">Credit Credential Issued</h3>
-                  <p className="text-xs text-[var(--color-muted-strong)]">EIP-712 signed · Tier {credential.credential?.tier}</p>
-                </div>
-              </div>
-              <ClockIcon className="w-5 h-5 text-[var(--color-muted-strong)]" aria-hidden="true" />
-            </div>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between pb-2 border-b border-[var(--color-hairline-dark)]">
-                <span className="text-[var(--color-muted)]">Tier</span>
-                <span className="font-mono font-bold text-[var(--color-primary)]">{credential.credential?.tier || 'Unknown'}</span>
-              </div>
-              <div className="flex justify-between pb-2 border-b border-[var(--color-hairline-dark)]">
-                <span className="text-[var(--color-muted)]">Wallet</span>
-                <span className="font-mono text-[11px] text-[var(--color-body-dark)] truncate">{credential.credential?.userAddress}</span>
-              </div>
-              <div className="flex justify-between pb-2 border-b border-[var(--color-hairline-dark)]">
-                <span className="text-[var(--color-muted)]">Tier Hash</span>
-                <span className="font-mono text-[11px] text-[var(--color-muted)] truncate">{credential.tierHash}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[var(--color-muted)]">Evaluation</span>
-                <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{credential.evaluation?.tier || '—'} tier · ${credential.evaluation?.totalPaidUSD || 0}</span>
-              </div>
-              {typeof credential.credential?.issuedAt === 'number' && (
-                <div className="flex justify-between">
-                  <span className="text-[var(--color-muted)]">Issued</span>
-                  <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{new Date(credential.credential.issuedAt * 1000).toLocaleTimeString()}</span>
-                </div>
-              )}
-            </div>
-            <p className="mt-4 text-[11px] text-[var(--color-muted-strong)]">Signature and tier are authoritative from backend. Client does not control tier.</p>
           </div>
         </section>
       )}
