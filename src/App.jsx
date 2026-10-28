@@ -3,7 +3,6 @@ import { BrowserProvider, Contract, formatEther, parseEther } from 'ethers';
 import CredentialFlow from './CredentialFlow';
 import { useWallet } from './useWallet';
 import ParticleField from './ParticleField';
-import ConfettiBurst from './ConfettiBurst';
 import AnimatedGraph from './AnimatedGraph';
 import abiJson from '../contracts/artifacts/contracts/CredPassLendingPool.sol/CredPassLendingPool.json';
 import deployConfig from '../contracts/config/deploy-local.json';
@@ -445,7 +444,7 @@ export default function App() {
             <BrandMark className="w-7 h-7" id="cp-brand-mark-nav" />
             <span className="text-lg font-bold text-[var(--color-primary)] tracking-tight">CredPass</span>
           </div>
-          <div className="flex items-center gap-6 text-sm font-medium hidden md:flex">
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-6 text-sm font-medium hidden md:flex">
             <a href="#features" className="text-[var(--color-muted-strong)] hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded-md px-2">Features</a>
             <a href="#how-it-works" className="text-[var(--color-muted-strong)] hover:text-[var(--color-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] rounded-md px-2">How It Works</a>
           </div>
@@ -583,40 +582,9 @@ export default function App() {
           </div>
         </section>
 
-        {/* Features grid */}
-        <section className="mt-16 pt-12 border-t border-[var(--color-hairline-dark)]">
-          <div className="container">
-            <div className="grid sm:grid-cols-3 gap-5">
-              <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
-                <ShieldIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" aria-hidden="true" />
-                <h3 className="text-sm font-bold text-white mb-2">Privacy-First</h3>
-                <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
-                  EIP-712 signed credentials prove your tier without exposing raw financial data.
-                </p>
-              </div>
-              <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
-                <TrendingUpIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" aria-hidden="true" />
-                <h3 className="text-sm font-bold text-white mb-2">Undercollateralized</h3>
-                <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
-                  Smart contracts verify your credential and unlock undercollateralized loan terms.
-                </p>
-              </div>
-              <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
-                <WalletIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" aria-hidden="true" />
-                <h3 className="text-sm font-bold text-white mb-2">Wallet-Linked</h3>
-                <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
-                  Your credit reputation travels with your MetaMask wallet. Portable and verifiable.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Credit Credential Issued — moved up near Get Credit Credential */}
-        <ConfettiBurst trigger={!!credential} />
-      <ConfettiBurst trigger={txState.status === 'confirmed'} />
+        {/* Credit Credential Issued — just below Get Credit Credential button */}
         {account && credential && (
-          <section className="container pt-6 pb-8">
+          <section className="container pt-4 pb-4">
             <div className="card max-w-3xl mx-auto">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
@@ -658,6 +626,35 @@ export default function App() {
             </div>
           </section>
         )}
+
+        {/* Features grid */}
+        <section id="features" className="mt-16 pt-12 border-t border-[var(--color-hairline-dark)]">
+          <div className="container">
+            <div className="grid sm:grid-cols-3 gap-5">
+              <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
+                <ShieldIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" aria-hidden="true" />
+                <h3 className="text-sm font-bold text-white mb-2">Privacy-First</h3>
+                <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
+                  EIP-712 signed credentials prove your tier without exposing raw financial data.
+                </p>
+              </div>
+              <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
+                <TrendingUpIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" aria-hidden="true" />
+                <h3 className="text-sm font-bold text-white mb-2">Undercollateralized</h3>
+                <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
+                  Smart contracts verify your credential and unlock undercollateralized loan terms.
+                </p>
+              </div>
+              <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
+                <WalletIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" aria-hidden="true" />
+                <h3 className="text-sm font-bold text-white mb-2">Wallet-Linked</h3>
+                <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
+                  Your credit reputation travels with your MetaMask wallet. Portable and verifiable.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
       {/* Pool & Loan State — always visible */}
       <section className="container pt-8 pb-12">

@@ -34,7 +34,6 @@ export default function CredentialFlow() {
 
   return (
     <div className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-[var(--color-surface-elevated-dark)]/20 rounded-3xl blur-[80px] pointer-events-none" aria-hidden="true"></div>
       <div className="relative z-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {steps.map((step, i) => (
           <div key={i} className="card-lift card animate-fade-in animate-slide-up group" style={{ animationDelay: `${i * 80}ms` }}>
