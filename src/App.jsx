@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { BrowserProvider, Contract, formatEther, parseEther } from 'ethers';
 import CredentialFlow from './CredentialFlow';
 import { useWallet } from './useWallet';
+import ParticleField from './ParticleField';
+import ConfettiBurst from './ConfettiBurst';
+import AnimatedGraph from './AnimatedGraph';
 import abiJson from '../contracts/artifacts/contracts/CredPassLendingPool.sol/CredPassLendingPool.json';
 import deployConfig from '../contracts/config/deploy-local.json';
 
@@ -433,6 +436,7 @@ export default function App() {
       <div className="bg-orb bg-orb-pink" aria-hidden="true" />
       <div className="bg-orb bg-orb-yellow" aria-hidden="true" />
       <div className="bg-orb bg-orb-blue" aria-hidden="true" />
+      <ParticleField />
 
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[var(--color-hairline-dark)] bg-[var(--color-canvas-dark)]/80 backdrop-blur-md">
@@ -609,6 +613,8 @@ export default function App() {
         </section>
 
         {/* Credit Credential Issued — moved up near Get Credit Credential */}
+        <ConfettiBurst trigger={!!credential} />
+      <ConfettiBurst trigger={txState.status === 'confirmed'} />
         {account && credential && (
           <section className="container pt-6 pb-8">
             <div className="card max-w-3xl mx-auto">
@@ -752,9 +758,7 @@ export default function App() {
                   <TrendingUpIcon className="w-4 h-4 text-[var(--color-primary)]" aria-hidden="true" />
                   Pool Activity
                 </h3>
-                <div className="h-32 w-full">
-                  <Sparkline points={[45, 62, 38, 78, 55, 90, 68, 110, 85, 140, 95, 130, 115, 160]} />
-                </div>
+                <AnimatedGraph data={[45, 62, 38, 78, 55, 90, 68, 110, 85, 140, 95, 130, 115, 160]} label="Pool Activity" color="#f0b90b" />
               </div>
               <div className="flex-1">
                 <h3 className="text-xs font-bold text-white mb-3 flex items-center gap-2">
@@ -1052,9 +1056,7 @@ export default function App() {
                         <TrendingUpIcon className="w-4 h-4 text-[var(--color-primary)]" aria-hidden="true" />
                         Pool Activity
                       </h3>
-                      <div className="h-32 w-full">
-                        <Sparkline points={[45, 62, 38, 78, 55, 90, 68, 110, 85, 140, 95, 130, 115, 160]} />
-                      </div>
+                      <AnimatedGraph data={[45, 62, 38, 78, 55, 90, 68, 110, 85, 140, 95, 130, 115, 160]} label="Pool Activity" color="#f0b90b" />
                     </div>
                   </div>
                 </div>
