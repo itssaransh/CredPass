@@ -15,6 +15,20 @@ Contract reference: [`contracts/DEPLOY_REF.md`](./contracts/DEPLOY_REF.md).
 | Database | Postgres (docker, `docker-compose.yml` — Redis/Mongo were cut, item 13) | `backend/db/init.sql` | 5432 |
 | Cloud deployment | Cloudflare Worker + D1 + Static Assets | `backend/worker/`, `wrangler.toml` | https |
 
+## Contributors
+
+### Saransh Mishra
+* Role: Backend & Data Architect
+* GitHub: [@itssaransh](https://github.com/itssaransh)
+
+### Shaswat Gupta
+- Role: Smart Contract Developer
+- GitHub: [@A1NAND1](https://github.com/A1NAND1)
+
+### Ayush Sharma
+- Role: Frontend Developer
+- GitHub: [@ayushsharma071203-creator](https://github.com/ayushsharma071203-creator)
+
 ## Deploy (Cloudflare Workers)
 
 **Live:** <https://credpass.credpass-app.workers.dev>
