@@ -50,23 +50,28 @@ jobs:
         run: npm ci --prefix contracts
 
       - name: Compile contracts
-        run: npx --prefix contracts hardhat compile
+        run: npx hardhat compile
+        working-directory: contracts
 
       - name: Contract unit tests
-        run: npx --prefix contracts hardhat test
+        run: npx hardhat test
+        working-directory: contracts
 
       - name: Database schema
         run: psql postgresql://credpass:credpass@localhost:5432/credpass -f backend/db/init.sql
 
       - name: Start local hardhat node (background)
-        run: npx --prefix contracts hardhat node & sleep 5
+        run: npx hardhat node & sleep 5
+        working-directory: contracts
 
       - name: Deploy (auto-writes deploy-local.json)
-        run: npx --prefix contracts hardhat run scripts/deploy.cjs --network localhost
+        run: npx hardhat run scripts/deploy.cjs --network localhost
+        working-directory: contracts
 
       # E2E also funds the pool with 5 ETH (fresh deployments start empty)
       - name: E2E A–G against deploy-local.json
-        run: npx --prefix contracts hardhat run scripts/e2e-local.cjs --network localhost
+        run: npx hardhat run scripts/e2e-local.cjs --network localhost
+        working-directory: contracts
 
       - name: Backend static guard tests
         run: node test/issue.test.js && node test/evaluation.test.js && node test/manipulation.test.js
