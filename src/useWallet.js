@@ -2,6 +2,18 @@ import { useState, useEffect, useCallback } from 'react';
 
 const LOCAL_HARDHAT_CHAIN_ID = '0x7a69';
 
+// Fetch the RPC URL from the backend (works locally and remotely)
+async function getRemoteRpcUrl() {
+  try {
+    const res = await fetch('/api/network-config');
+    const data = await res.json();
+    if (data && data.rpcUrl) return data.rpcUrl;
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
 // MetaMask-ready params for the local Hardhat node (matches hardhat.config.cjs)
 const LOCAL_NETWORK_PARAMS = {
   chainId: LOCAL_HARDHAT_CHAIN_ID,
@@ -53,6 +65,11 @@ export function useWallet() {
   const switchToLocalNetwork = useCallback(async () => {
     if (!checkMetaMask()) return false;
     try {
+      const rpcUrl = await getRemoteRpcUrl() || LOCAL_NETWORK_PARAMS.rpcUrls[0];
+      const params = {
+        ...LOCAL_NETWORK_PARAMS,
+        rpcUrls: [rpcUrl],
+      };
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: LOCAL_HARDHAT_CHAIN_ID }],
@@ -64,7 +81,7 @@ export function useWallet() {
         try {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
-            params: [LOCAL_NETWORK_PARAMS],
+            params: [params],
           });
           setError(null);
           return true;

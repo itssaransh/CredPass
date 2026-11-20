@@ -16,6 +16,27 @@ const FALLBACK_TIER_MAP = {
   C: { maxETH: '0.2', ratePercent: '18' },
 };
 
+// Vite's dev proxy returns a bare 502/504 when the API process is not
+// reachable. Turn that into an actionable message instead of "Request failed".
+async function apiErrorMessage(res, fallback) {
+  let text = '';
+  try { text = await res.text(); } catch (e) { /* ignore */ }
+  try {
+    const data = JSON.parse(text);
+    if (data && (data.error || data.detail)) {
+      const message = data.detail ? `${data.error} (${data.detail})` : data.error;
+      if (res.status === 503) {
+        return `${message} — check that Postgres is running ("npm run dev:db").`;
+      }
+      return message;
+    }
+  } catch (e) { /* not JSON */ }
+  if (res.status === 502 || res.status === 504) {
+    return 'Backend API is unreachable. Start it with "npm run dev" or "npm run dev:backend" (Postgres must be running).';
+  }
+  return text.trim() || fallback || `Request failed: ${res.status}`;
+}
+
 function friendlyTxError(e) {
   const raw = String((e && (e.reason || e.shortMessage || e.message)) || e || '');
   const code = e && e.code;
@@ -286,8 +307,15 @@ export default function App() {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userAddress: account || '' })
       });
+      // Check for HTTP errors first before attempting JSON parse
+      if (!res.ok) {
+        setBackendError(await apiErrorMessage(res, `Request failed: ${res.status}`));
+        setCredential(null);
+        setLoading(false);
+        return;
+      }
       const data = await res.json();
-      if (!res.ok || data.error) { setBackendError(data.error || `Request failed: ${res.status}`); setCredential(null); }
+      if (data.error) { setBackendError(data.error); setCredential(null); }
       else { setCredential(data); setBackendError(null); }
     } catch (e) { setBackendError('Failed to connect to backend: ' + (e.message || e)); setCredential(null); }
     setLoading(false);
@@ -301,8 +329,19 @@ export default function App() {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userAddress: account })
       });
-      const data = await res.json();
-      if (res.ok) { setFaucetState({ status: 'done', message: `${data.amount} ETH sent — new balance: ${data.balanceETH} ETH` }); }
+      // Check for HTTP errors first before attempting JSON parse
+      if (!res.ok) {
+        setFaucetState({ status: 'failed', message: await apiErrorMessage(res, `Faucet failed: ${res.status}`) });
+        return;
+      }
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        setFaucetState({ status: 'failed', message: 'Invalid response from backend' });
+        return;
+      }
+      if (!data.error) { setFaucetState({ status: 'done', message: `${data.amount} ETH sent — new balance: ${data.balanceETH} ETH` }); }
       else { setFaucetState({ status: 'failed', message: data.error || `Faucet failed: ${res.status}` }); }
     } catch (e) { setFaucetState({ status: 'failed', message: 'Faucet unreachable: ' + (e.message || e) }); }
   };
@@ -315,7 +354,7 @@ export default function App() {
     if (loanState && loanState.borrower && loanState.borrower !== '0x0000000000000000000000000000000000000000' && !loanState.repaid) {
       setTxState({ status: 'failed', message: 'You already have an active loan. Repay it first, then borrow again — possibly with an upgraded tier.', hash: null }); return;
     }
-    if (credential.credential.userAddress !== account) { setTxState({ status: 'failed', message: 'Credential wallet does not match connected account', hash: null }); return; }
+    if ((credential.credential.userAddress || '').toLowerCase() !== (account || '').toLowerCase()) { setTxState({ status: 'failed', message: 'Credential wallet does not match connected account', hash: null }); return; }
     if (typeof credential.credential.issuedAt !== 'number') { setTxState({ status: 'failed', message: 'Stale credential missing issuedAt — refresh your credit credential', hash: null }); return; }
     setTxState({ status: 'submitting', message: 'Submitting borrow transaction…', hash: null });
     try {
@@ -356,8 +395,19 @@ export default function App() {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userAddress: account, txHash: tx.hash })
           });
-          const recData = await recRes.json();
-          if (recRes.ok && recData.recorded && recData.evaluation) {
+          // Check for HTTP errors first before attempting JSON parse
+          if (!recRes.ok) {
+            setTxState({ status: 'failed', message: `Repayment record failed: ${await apiErrorMessage(recRes, recRes.status)}` });
+            return;
+          }
+          let recData;
+          try {
+            recData = await recRes.json();
+          } catch (e) {
+            setTxState({ status: 'failed', message: 'Invalid response from backend' });
+            return;
+          }
+          if (recData.recorded && recData.evaluation) {
             upgraded = true;
             const nextTier = recData.evaluation.tier;
             const prevTier = credential && credential.credential ? credential.credential.tier : null;
@@ -430,11 +480,13 @@ export default function App() {
   const busy = txState.status === 'pending' || txState.status === 'submitting';
 
   return (
-    <main className="min-h-screen bg-[var(--color-canvas-dark)] text-[var(--color-body-dark)] selection:bg-[var(--color-primary)] selection:text-[var(--color-ink)] relative flex flex-col overflow-hidden">
-      {/* Decorative background orbs — subtle */}
-      <div className="bg-orb bg-orb-pink" aria-hidden="true" />
-      <div className="bg-orb bg-orb-yellow" aria-hidden="true" />
-      <div className="bg-orb bg-orb-blue" aria-hidden="true" />
+    <main className="min-h-screen bg-[var(--color-canvas-dark)] text-[var(--color-body-dark)] selection:bg-[var(--color-primary)] selection:text-[var(--color-ink)] relative flex flex-col overflow-x-clip">
+      {/* Decorative background orbs — clipped so they never create a second scrollbar */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="bg-orb bg-orb-pink" />
+        <div className="bg-orb bg-orb-yellow" />
+        <div className="bg-orb bg-orb-blue" />
+      </div>
       <ParticleField />
 
       {/* Navbar */}
@@ -521,7 +573,7 @@ export default function App() {
       )}
 
       {/* Main content area - wraps all sections to push footer to bottom */}
-      <div className="flex-1 min-h-0 overflow-y-auto pt-16 pb-8">
+      <div className="flex-1 min-h-0 pt-16 pb-8">
         <>
         {faucetState.status !== 'idle' && faucetState.message && (
           <div className={`container py-3 rounded-xl border text-xs font-medium ${
@@ -745,6 +797,42 @@ export default function App() {
         </div>
       </section>
 
+      {/* Borrow & Repay actions */}
+      {account && (
+        <section className="container pt-8 pb-12">
+          <div className="card">
+            <h3 className="text-base font-bold text-white mb-4">Loan Terms (From Contract)</h3>
+            <div className="grid sm:grid-cols-3 gap-4 mb-6">
+              <div className="bg-[var(--color-surface-elevated-dark)] rounded-xl p-4 border border-[var(--color-hairline-dark)]">
+                <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-1">Tier</div>
+                <div className="text-xl font-bold text-[var(--color-primary)]">{credential?.credential?.tier}</div>
+              </div>
+              <div className="bg-[var(--color-surface-elevated-dark)] rounded-xl p-4 border border-[var(--color-hairline-dark)]">
+                <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-1">Max Loan</div>
+                <div className="text-xl font-bold text-white">{tierInfo?.maxETH} ETH</div>
+              </div>
+              <div className="bg-[var(--color-surface-elevated-dark)] rounded-xl p-4 border border-[var(--color-hairline-dark)]">
+                <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-1">Fixed Rate</div>
+                <div className="text-xl font-bold text-white">{tierInfo?.ratePercent}%</div>
+              </div>
+            </div>
+            <div className="bg-[var(--color-surface-elevated-dark)] rounded-xl p-4 border border-[var(--color-hairline-dark)] mb-6">
+              <div className="flex justify-between mb-2"><span className="text-[var(--color-muted-strong)]">Principal</span> <span className="font-mono text-[var(--color-body-dark)]">{tierInfo?.maxETH} ETH</span></div>
+              <div className="flex justify-between mb-2"><span className="text-[var(--color-muted-strong)]">Fixed Interest</span> <span className="font-mono text-[var(--color-body-dark)]">{parseFloat(tierInfo?.maxETH || '0') * parseFloat(tierInfo?.ratePercent || '0') / 100} ETH</span></div>
+              <div className="border-t border-[var(--color-hairline-dark)] pt-2 flex justify-between font-bold text-[var(--color-primary)]"><span>Total Repayment</span> <span className="font-mono">{(parseFloat(tierInfo?.maxETH || '0') * (1 + parseFloat(tierInfo?.ratePercent || '0') / 100)).toFixed(4)} ETH</span></div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button onClick={handleBorrow} disabled={!credential || !isLocalNetwork || hasActiveLoan || busy} className="btn-primary text-base">
+                {hasActiveLoan ? 'Repay Loan First' : 'Borrow ETH'}
+              </button>
+              <button onClick={handleRepay} disabled={!loanState || !loanState.borrower || loanState.borrower === '0x0000000000000000000000000000000000000000' || loanState.repaid || !isLocalNetwork || busy} className="btn-secondary text-base">
+                Repay Loan
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Sparkline + Recent Activity */}
       {account && (
         <section className="container pt-8 pb-12">
@@ -823,240 +911,6 @@ export default function App() {
                 >
                   {claimBusy ? 'Claiming…' : earnedYield !== null && parseFloat(earnedYield) > 0 ? 'Claim Interest' : 'No Yield to Claim'}
                 </button>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Logged-in features */}
-      {account && (
-        <section className="container pt-12 pb-12 border-t border-[var(--color-hairline-dark)]">
-          <div className="container">
-            {/* Features grid */}
-            <div className="grid sm:grid-cols-3 gap-5 mb-16">
-              <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '100ms' }}>
-                <ShieldIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" aria-hidden="true" />
-                <h3 className="text-sm font-bold text-white mb-2">Privacy-First</h3>
-                <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
-                  EIP-712 signed credentials prove your tier without exposing raw financial data.
-                </p>
-              </div>
-              <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '200ms' }}>
-                <TrendingUpIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" aria-hidden="true" />
-                <h3 className="text-sm font-bold text-white mb-2">Undercollateralized</h3>
-                <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
-                  Smart contracts verify your credential and unlock undercollateralized loan terms.
-                </p>
-              </div>
-              <div className="card-lift card animate-fade-in animate-slide-up" style={{ animationDelay: '300ms' }}>
-                <WalletIcon className="w-5 h-5 text-[var(--color-primary)] mb-3" aria-hidden="true" />
-                <h3 className="text-sm font-bold text-white mb-2">Wallet-Linked</h3>
-                <p className="text-[12px] text-[var(--color-muted-strong)] leading-relaxed">
-                  Your credit reputation travels with your MetaMask wallet. Portable and verifiable.
-                </p>
-              </div>
-            </div>
-
-            {/* Pool stats */}
-            <h2 className="text-xl font-bold text-white mb-6">Pool & Loan State</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-              <AnimatedCounter
-                value={dataLoading ? '0' : poolLiquidity}
-                label="Pool Liquidity"
-                icon={CoinsIcon}
-                color="text-white"
-                suffix=" ETH"
-                className="stagger-1"
-              />
-              <AnimatedCounter
-                value={dataLoading ? '0' : (earnedYield !== null ? earnedYield : '0')}
-                label="Your Accrued Yield"
-                icon={SendIcon}
-                color="text-[var(--color-primary)]"
-                suffix=" ETH"
-                className="stagger-2"
-              />
-              <AnimatedCounter
-                value={dataLoading ? '0' : poolTotalDeposits}
-                label="Total Deposits"
-                icon={WalletIcon}
-                color="text-white"
-                suffix=" ETH"
-                className="stagger-3"
-              />
-              <AnimatedCounter
-                value={dataLoading ? '0' : poolTotalInterestEarned}
-                label="Total Interest Paid"
-                icon={TrendingUpIcon}
-                color="text-[var(--color-trading-up)]"
-                suffix=" ETH"
-                className="stagger-4"
-              />
-            </div>
-
-            <div className="grid lg:grid-cols-3 gap-8">
-              {/* Your Position */}
-              <div className="col-span-1 lg:col-span-2">
-                <div className="card">
-                  <div className="flex items-center justify-between mb-5">
-                    <div>
-                      <h3 className="text-base font-bold text-white">Your Position</h3>
-                      <p className="text-[11px] text-[var(--color-muted-strong)]">Borrower state on the lending pool contract.</p>
-                    </div>
-                    <CoinsIcon className="w-6 h-6 text-[var(--color-muted-strong)]" aria-hidden="true" />
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
-                      <div className="flex items-center gap-2">
-                        <LockIcon className="w-3 h-3 text-[var(--color-muted-strong)]" aria-hidden="true" />
-                        <span className="text-sm text-[var(--color-body-dark)]">Borrower</span>
-                      </div>
-                      <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{loanState && loanState.borrower ? loanState.borrower : 'None'}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
-                      <div className="flex items-center gap-2">
-                        <PercentIcon className="w-3 h-3 text-[var(--color-muted-strong)]" aria-hidden="true" />
-                        <span className="text-sm text-[var(--color-body-dark)]">Principal</span>
-                      </div>
-                      <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{loanState && loanState.principal ? loanState.principal + ' ETH' : '—'}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
-                      <div className="flex items-center gap-2">
-                        <ClockIcon className="w-3 h-3 text-[var(--color-muted-strong)]" aria-hidden="true" />
-                        <span className="text-sm text-[var(--color-body-dark)]">Repayment Due</span>
-                      </div>
-                      <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{loanState && loanState.repaymentDue ? loanState.repaymentDue + ' ETH' : '—'}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
-                      <div className="flex items-center gap-2">
-                        <ShieldIcon className="w-3 h-3 text-[var(--color-muted-strong)]" aria-hidden="true" />
-                        <span className="text-sm text-[var(--color-body-dark)]">Tier</span>
-                      </div>
-                      <span className="font-mono text-[11px] text-[var(--color-body-dark)]">{loanState && loanState.tier ? loanState.tier : '—'}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-[var(--color-surface-elevated-dark)] rounded-xl border border-[var(--color-hairline-dark)]">
-                      <div className="flex items-center gap-2">
-                        <CheckIcon className="w-3 h-3 text-[var(--color-trading-up)]" aria-hidden="true" />
-                        <span className="text-sm text-[var(--color-body-dark)]">Repaid</span>
-                      </div>
-                      <span className={`font-mono text-[11px] ${loanState?.repaid ? 'text-[var(--color-trading-up)]' : 'text-[var(--color-muted)]'}`}>
-                        {loanState ? (loanState.repaid ? 'Yes' : 'No') : '—'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Borrow / Repay actions */}
-                <div className="mt-8 card">
-                  <h3 className="text-base font-bold text-white mb-4">Loan Terms (From Contract)</h3>
-                  <div className="grid sm:grid-cols-3 gap-4 mb-6">
-                    <div className="bg-[var(--color-surface-elevated-dark)] rounded-xl p-4 border border-[var(--color-hairline-dark)]">
-                      <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-1">Tier</div>
-                      <div className="text-xl font-bold text-[var(--color-primary)]">{credential?.credential?.tier}</div>
-                    </div>
-                    <div className="bg-[var(--color-surface-elevated-dark)] rounded-xl p-4 border border-[var(--color-hairline-dark)]">
-                      <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-1">Max Loan</div>
-                      <div className="text-xl font-bold text-white">{tierInfo?.maxETH} ETH</div>
-                    </div>
-                    <div className="bg-[var(--color-surface-elevated-dark)] rounded-xl p-4 border border-[var(--color-hairline-dark)]">
-                      <div className="text-[10px] uppercase tracking-wider text-[var(--color-muted)] mb-1">Fixed Rate</div>
-                      <div className="text-xl font-bold text-white">{tierInfo?.ratePercent}%</div>
-                    </div>
-                  </div>
-                  <div className="bg-[var(--color-surface-elevated-dark)] rounded-xl p-4 border border-[var(--color-hairline-dark)]">
-                    <div className="flex justify-between mb-2"><span className="text-[var(--color-muted-strong)]">Principal</span> <span className="font-mono text-[var(--color-body-dark)]">{tierInfo?.maxETH} ETH</span></div>
-                    <div className="flex justify-between mb-2"><span className="text-[var(--color-muted-strong)]">Fixed Interest</span> <span className="font-mono text-[var(--color-body-dark)]">{parseFloat(tierInfo?.maxETH || '0') * parseFloat(tierInfo?.ratePercent || '0') / 100} ETH</span></div>
-                    <div className="border-t border-[var(--color-hairline-dark)] pt-2 flex justify-between font-bold text-[var(--color-primary)]"><span>Total Repayment</span> <span className="font-mono">{(parseFloat(tierInfo?.maxETH || '0') * (1 + parseFloat(tierInfo?.ratePercent || '0') / 100)).toFixed(4)} ETH</span></div>
-                  </div>
-                  <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                    <button onClick={handleBorrow} disabled={!credential || !isLocalNetwork || hasActiveLoan || busy}
-                      className="btn-primary text-base">
-                      {hasActiveLoan ? 'Repay Loan First' : 'Borrow ETH'}
-                    </button>
-                    <button onClick={handleRepay} disabled={!loanState || !loanState.borrower || loanState.borrower === '0x0000000000000000000000000000000000000000' || loanState.repaid || !isLocalNetwork || busy} className="btn-secondary text-base">
-                      Repay Loan
-                    </button>
-                  </div>
-                </div>
-
-                {/* Deposit & Claim */}
-                <div className="mt-8 card">
-                  <div className="grid sm:grid-cols-2 gap-5">
-                    <div className="card">
-                      <h4 className="text-xs font-bold text-white mb-4 flex items-center gap-2">
-                        <SendIcon className="w-3 h-3 text-[var(--color-primary)]" aria-hidden="true" />
-                        Deposit into Pool
-                      </h4>
-                      <p className="text-[11px] text-[var(--color-muted-strong)] mb-4">Deposit ETH into the lending pool — you accrue a proportional share of repayment interest.</p>
-                      <div className="input-focus flex gap-3">
-                        <input
-                          type="text"
-                          inputMode="decimal"
-                          placeholder="0.1"
-                          value={depositAmount}
-                          onChange={(e) => setDepositAmount(e.target.value.replace(/[^0-9.]/g, ''))}
-                          disabled={!account || depositBusy}
-                          className="input-field"
-                          aria-label="Deposit amount in ETH"
-                        />
-                        <button
-                          onClick={handleDeposit}
-                          disabled={!account || depositBusy || !depositAmount || parseFloat(depositAmount) <= 0 || isNaN(parseFloat(depositAmount))}
-                          className="btn-primary text-sm"
-                        >
-                          {depositBusy ? 'Depositing…' : 'Deposit'}
-                        </button>
-                      </div>
-                    </div>
-                    <div className="card">
-                      <h4 className="text-xs font-bold text-white mb-4 flex items-center gap-2">
-                        <CheckIcon className="w-3 h-3 text-[var(--color-primary)]" aria-hidden="true" />
-                        Claim Interest
-                      </h4>
-                      <p className="text-[11px] text-[var(--color-muted-strong)] mb-4">Withdraw your accrued-but-unclaimed interest from the pool.</p>
-                      <button
-                        onClick={handleClaim}
-                        disabled={!account || claimBusy || !earnedYield || parseFloat(earnedYield) <= 0}
-                        className={`w-full py-3 rounded-xl font-bold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 ${
-                          earnedYield !== null && parseFloat(earnedYield) > 0
-                            ? 'bg-[var(--color-primary)] text-[var(--color-ink)] hover:bg-[var(--color-primary-active)]'
-                            : 'bg-[var(--color-surface-elevated-dark)] text-[var(--color-body-dark)] border border-[var(--color-hairline-dark)]'
-                        }`}
-                      >
-                        {claimBusy ? 'Claiming…' : earnedYield !== null && parseFloat(earnedYield) > 0 ? 'Claim Interest' : 'No Yield to Claim'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right sidebar */}
-              <div className="col-span-1 lg:col-span-1">
-                <div className="card h-full">
-                  <div className="flex flex-col gap-6">
-                    <div>
-                      <h3 className="text-xs font-bold text-white mb-3 flex items-center gap-2">
-                        <SendIcon className="w-4 h-4 text-[var(--color-primary)]" aria-hidden="true" />
-                        Recent Activity
-                      </h3>
-                      <RecentActivity items={[
-                        { address: '0x7099…79C8', amount: '5.00' },
-                        { address: '0x3C44…DdDd', amount: '0.20' },
-                        { address: '0xd67e…d528', amount: '0.10' },
-                        { address: '0x19E7…ff2A', amount: '2.50' },
-                        { address: '0x7099…79C8', amount: '5.175' },
-                      ]} />
-                    </div>
-                    <div className="mt-8">
-                      <h3 className="text-xs font-bold text-white mb-3 flex items-center gap-2">
-                        <TrendingUpIcon className="w-4 h-4 text-[var(--color-primary)]" aria-hidden="true" />
-                        Pool Activity
-                      </h3>
-                      <AnimatedGraph data={[45, 62, 38, 78, 55, 90, 68, 110, 85, 140, 95, 130, 115, 160]} label="Pool Activity" color="#f0b90b" />
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

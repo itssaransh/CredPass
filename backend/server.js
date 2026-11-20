@@ -29,6 +29,14 @@ const RPC_URL = process.env.RPC_URL || 'http://127.0.0.1:8545';
 const app = express();
 app.use(express.json());
 
+// The Vite dev proxy strips the /api prefix, while production hits the Worker
+// with it. Register both so the frontend works in either environment.
+app.get(['/api/network-config', '/network-config'], (req, res) => {
+    const chainConfig = loadChainConfig();
+    const rpcUrl = process.env.RPC_URL || (chainConfig && chainConfig.rpcUrl) || 'http://127.0.0.1:8545';
+    res.json({ rpcUrl: rpcUrl.replace(/\/$/, '') + '/' });
+});
+
 app.get('/health', async (req, res) => {
     const dbHealth = await healthDB();
     res.json({
@@ -84,11 +92,12 @@ app.post('/credentials/issue', issueRateLimiter, async (req, res) => {
     const chainConfig = loadChainConfig();
     let issuedAt = Math.floor(Date.now() / 1000);
     let tierParams = null;
+    let chainProvider = null;
     try {
-        const provider = new JsonRpcProvider((chainConfig && chainConfig.rpcUrl) || RPC_URL);
+        chainProvider = new JsonRpcProvider((chainConfig && chainConfig.rpcUrl) || RPC_URL);
         let latest;
         try {
-            latest = await provider.getBlock('latest');
+            latest = await chainProvider.getBlock('latest');
             if (latest && latest.timestamp) issuedAt = latest.timestamp;
         } catch (e) { /* keep local-clock issuedAt */ }
 
@@ -96,7 +105,7 @@ app.post('/credentials/issue', issueRateLimiter, async (req, res) => {
         // degrade to the DB-derived defaults if the chain read fails.
         try {
             if (chainConfig && chainConfig.contractAddress && poolAbi) {
-                const poolContract = new Contract(chainConfig.contractAddress, poolAbi, provider);
+                const poolContract = new Contract(chainConfig.contractAddress, poolAbi, chainProvider);
                 const [limitWei, rateBps] = await Promise.all([poolContract.tierLimits(tier), poolContract.tierRates(tier)]);
                 if (limitWei > 0n) {
                     tierParams = {
@@ -108,6 +117,11 @@ app.post('/credentials/issue', issueRateLimiter, async (req, res) => {
             }
         } catch (e) { /* config fallback below */ }
     } catch (e) { /* issuedAt local fallback already set */ }
+    finally {
+        // Stop ethers' background network-detection retry loop when the local
+        // Hardhat node is not running (it otherwise logs forever).
+        if (chainProvider) chainProvider.destroy();
+    }
 
     const domain = { name: 'CredPass', version: '1' };
     const types = {

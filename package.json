@@ -4,8 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently -n api,web -c green,magenta \"npm run dev:backend\" \"npm run dev:web\"",
     "dev:node": "cd contracts && npx hardhat node",
+    "dev:node:server": "node contracts/scripts/run-server.mjs",
+    "dev:node:persistent": "node contracts/scripts/run-server.mjs",
     "dev:backend": "cd backend && node --watch server.js",
     "dev:web": "vite",
     "dev:db": "docker-compose up -d",

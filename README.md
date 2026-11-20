@@ -30,6 +30,7 @@ npm run deploy:db     # create/update the D1 schema (safe to re-run)
 npm run deploy:seed   # idempotent demo repayment data
 npm run deploy:full   # deploy:db + deploy:seed + deploy
 npm run deploy:dev    # build + `wrangler dev` for a local Worker preview
+npm run dev:node:server # persistent Hardhat node (0.0.0.0:8545, accessible remotely)
 ```
 
 First-time setup (already done for the live deployment):
@@ -116,11 +117,9 @@ cd contracts && npx hardhat compile && npx hardhat run scripts/deploy.cjs --netw
 # 4. fund the pool (script inside the e2e run does 5 ETH, or manually:)
 cd contracts && npx hardhat run scripts/e2e-local.cjs --network localhost && cd ..
 
-# 5. backend (new terminal)
-npm run dev:backend
-
-# 6. frontend (new terminal)
+# 5. backend + frontend together (new terminal)
 npm run dev
+# (frontend only: npm run dev:web — the API will return 502 without the backend)
 ```
 
 Or all long-running processes at once (after steps 0–2 + deploy): `npm run dev:all` (node, backend, web).

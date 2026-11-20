@@ -28,8 +28,8 @@ enabled = true
 
 [vars]
 ETH_USD_PRICE = "2750"
-# Optional on-chain integration. With these unset, credential issuance uses the
-# DB-derived tier terms, the faucet stays disabled (by design), and
-# /repayments/record returns 503.
-# RPC_URL = "https://..."
-# POOL_ADDRESS = "0x..."
+# Replace with your server's public/local IP for remote access:
+# Example: RPC_URL = "http://192.168.1.100:8545"
+# Example: POOL_ADDRESS = "0x610178dA211FEF7D417bC0e6FeD39F05609AD788"
+RPC_URL = "http://192.168.1.105:8545"
+POOL_ADDRESS = "0x610178dA211FEF7D417bC0e6FeD39F05609AD788"

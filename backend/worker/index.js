@@ -40,6 +40,7 @@ const CORS_HEADERS = {
 
 const API_PATHS = new Set([
     '/health',
+    '/network-config',
     '/credentials/issue',
     '/credentials/verify',
     '/faucet/drip',
@@ -328,6 +329,9 @@ export default {
             }
             if (path === '/credentials/issue' && request.method === 'POST') {
                 return await handleIssue(request, env);
+            }
+            if (path === '/network-config' && request.method === 'GET') {
+                return json({ rpcUrl: (env.RPC_URL || 'http://127.0.0.1:8545').replace(/\/$/, '') + '/' });
             }
             if (path === '/credentials/verify' && request.method === 'GET') {
                 return json({ message: 'Pass signature + tierHash to smart contract verifyAndIssueLoan' });
